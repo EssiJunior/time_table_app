@@ -1,10 +1,24 @@
 from .database import Base
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql.sqltypes import TIMESTAMP
+from sqlalchemy.sql.sqltypes import TIMESTAMP, Time
 from sqlalchemy.sql.expression import text
-from sqlalchemy.types import Time
+#from sqlalchemy.types import Time
+from fastapi_users.db import SQLAlchemyBaseUserTableUUID, SQLAlchemyUserDatabase
+from fastapi_users_db_sqlalchemy.access_token import (
+    SQLAlchemyAccessTokenDatabase,
+    SQLAlchemyBaseAccessTokenTableUUID,
+)
 
+class Utilisateur(Base):
+    __tablename__ = "utilisateur"
+    
+    id = Column(Integer, primary_key = True, nullable = False)
+    email = Column(String, nullable=False, unique=True)
+    password = Column(String, nullable=False)
+    phone_number = Column(String, nullable = False, server_default= "TRUE")
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default= text("now()"))
+    
 class Enseignant(Base):
     __tablename__ = "enseignant"
     
@@ -73,13 +87,13 @@ class Filiere(Base):
 class Programmer(Base):
     __tablename__ = "programmer"
 
-    matricule_enseignant = Column(String(10), ForeignKey("enseignant.matricule", ondelete="CASCADE"), nullable = False)
-    code_classe = Column(String(10), ForeignKey("classe.code", ondelete="CASCADE"), nullable = False)
-    code_cours = Column(String(10), ForeignKey("cours.code", ondelete="CASCADE"), nullable = False)
-    heure_debut = Column(Time(timezone=False), ForeignKey("plage_horaire.heure_debut", ondelete="CASCADE"), nullable = False)
-    heure_fin = Column(Time(timezone=False), ForeignKey("plage_horaire.heure_fin", ondelete="CASCADE"), nullable = False)
-    code_salle= Column(String(50), ForeignKey("salle.code", ondelete="CASCADE"), nullable = False)
-    nom_jour = Column(String(10), ForeignKey("jour.nom", ondelete="CASCADE"), nullable = False)
+    code_classe = Column(String(10), ForeignKey("classe.code", ondelete="CASCADE"), primary_key = True, nullable = False)
+    code_cours = Column(String(10), ForeignKey("cours.code", ondelete="CASCADE"), primary_key = True, nullable = False)
+    matricule_enseignant = Column(String(10), ForeignKey("enseignant.matricule", ondelete="CASCADE"), primary_key = True, nullable = False)
+    heure_debut = Column(Time(timezone=False), ForeignKey("plage_horaire.heure_debut", ondelete="CASCADE"), primary_key = True, nullable = False)
+    heure_fin = Column(Time(timezone=False), ForeignKey("plage_horaire.heure_fin", ondelete="CASCADE"), primary_key = True, nullable = False)
+    code_salle= Column(String(50), ForeignKey("salle.code", ondelete="CASCADE"), primary_key = True, nullable = False)
+    nom_jour = Column(String(10), ForeignKey("jour.nom", ondelete="CASCADE"), primary_key = True, nullable = False)
 
 class Activite(Base):
     __tablename__ = "activite"
