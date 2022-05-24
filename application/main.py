@@ -20,7 +20,7 @@ app.include_router(dashboard_teacher.router)
 
 @app.get("/")
 def root():
-    return {"message": "Hello world, by a backend programmer"}
+    return {"message": "Hello world, by a backend programmer | CI/CD"}
 
 #@app.on_event("startup")
 #async def create_db():
