@@ -3,6 +3,17 @@ from datetime import datetime
 from typing import Optional
 
 #--------------------------------- Admin's Dashbord ---------------------------------#
+class TeacherCreate(BaseModel):
+    matricule: str
+    nom: str
+
+class TeacherResponse(BaseModel):
+    nom: str
+    login: str
+    password: str
+    created_at: datetime
+    class Config:
+        orm_mode = True
 class CourseCreate(BaseModel):
     code: str 
     semester: str 
@@ -10,36 +21,25 @@ class CourseCreate(BaseModel):
     
 class CourseResponse(CourseCreate):
     ...
+    class Config:
+        orm_mode = True
 
 class AdminCreate(BaseModel):
     login: str
     mot_de_passe: str
 
-class AdminResponse(BaseModel):
-    message: str
+class AdminResponse(BaseModel):         
+    login: str
+    status: str
     class Config:
         orm_mode = True
-        
-class AdminLogin(BaseModel):
-    login: str
-    password: str
+
+
+
+#------------------------------------------------------------------------------------#
 #--------------------------------- Teacher's Dashbord  ---------------------------------#
-class TeacherCreate(BaseModel):
-    matricule: str
-    nom: str
-    password: str
-    login: str
     
-class TeacherResponse(BaseModel):
-    nom: str
-    login: str
-    created_at: datetime
-    class Config:
-        orm_mode = True
         
-class TeacherLogin(BaseModel):
-    login: str
-    password: str
 #--------------------------------------------------------------------------#
 
 class UserLoginValidation(BaseModel):
@@ -50,7 +50,7 @@ class UserLoginValidation(BaseModel):
 
 #--------------------------------- Utils  ---------------------------------#
 
-class TokenResponse(BaseModel):
+class LoginResponse(BaseModel):
     access_token: str
     token_type: str
     user: str

@@ -1,75 +1,59 @@
-from fastapi import status, Depends , HTTPException, Response, APIRouter
-from fastapi.security.oauth2 import OAuth2PasswordRequestForm
-from .. import models, schemas, utils, oauth2
-from datetime import datetime
+from fastapi import status, Depends , HTTPException, APIRouter
+from .. import models, schemas, utils
 from typing import List 
 from sqlalchemy.orm import Session
 from ..database import get_db
+from datetime import datetime
 
 router = APIRouter(
     prefix="",
     tags=["Admin's Dashbord"]
 )
 
-@router.post("/create_admin", status_code = status.HTTP_201_CREATED, response_model=schemas.AdminResponse)
-def createAdmin(admin: schemas.AdminCreate, db: Session = Depends(get_db)):
+@router.post("/admin", status_code = status.HTTP_201_CREATED, response_model=schemas.AdminResponse)
+def create_an_admin(admin: schemas.AdminCreate, db: Session = Depends(get_db)):
     hashed_password = utils.hashed(admin.mot_de_passe)
     admin.mot_de_passe = hashed_password
     admin = models.Administrateur(**admin.dict())
     db.add(admin)
     db.commit()
-    print(admin)
     db.refresh(admin)
-    print(admin)
-    message = f"Administrator: {admin} /nStatus: Registered"
-    return {"message": message}
     
-@router.post("/login_admin", response_model=schemas.TokenResponse)
-def login(user_log: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(models.Administrateur).filter(models.Administrateur.login == user_log.username).first()
+    return {"login":admin.login, "status": "Registered"}
 
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Vous n'avez pas de compte")
 
-    if not utils.verified(user_log.password, user.mot_de_passe):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Mot de passe incorrect")
-
-    access_token = oauth2.create_access_token(data= {"user_id": user.login})
+@router.post("/teacher", status_code = status.HTTP_201_CREATED, response_model=schemas.TeacherResponse)
+def create_a_teacher(teacher: schemas.TeacherCreate, db: Session = Depends(get_db) ):
+    password = utils.password_generated()
+    login = utils.login_generated(teacher.matricule)
+    utils.store_teachers_in_file(teacher.nom, login, password)
     
-    return {"access_token": access_token, "token_type": "Bearer", "date": datetime.now()}
-
-
-@router.post("/registerTeacher", status_code = status.HTTP_201_CREATED, response_model=schemas.TeacherResponse)
-def createUser(teacher: schemas.TeacherCreate,db: Session = Depends(get_db) ):
-    #hash the password
-    
-    hashed_password = utils.hashed(teacher.password)
-    teacher.password = hashed_password
-    user = models.Enseignant(**teacher.dict())
-    db.add(user)
+    hashed_password = utils.hashed(password)
+    password = hashed_password
+    teacher = models.Enseignant(matricule=teacher.matricule, nom=teacher.nom, mot_de_passe=password, login=login)
+    db.add(teacher)
     db.commit()
-    print(user)
-    db.refresh(user)
-    print(user)
-    return user
-
-
-@router.get("/showTeachers", response_model= List[schemas.TeacherResponse])
-def getUsers(db: Session = Depends(get_db)):    
-    users = db.query(models.Enseignant).all()
+    db.refresh(teacher)
     
-    return users
+    return {"nom":teacher.nom, "login":login, "password": password, "created_at": datetime.now()}
 
-@router.get("/showUser/{identifier}", response_model= schemas.TeacherResponse)
-def getSpecificUser(identifier: int, db: Session = Depends(get_db)):
-    user = db.query(models.Enseignant).filter(models.Enseignant.id == identifier).first()
-    if not user:
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"L'utilisateur ayant comme identifiant << {identifier} >> n'existe pas ")
+
+@router.get("/teachers", response_model= List[schemas.TeacherResponse])
+def display_a_teachers(db: Session = Depends(get_db)):    
+    teachers = db.query(models.Enseignant).all()
     
-    return user
+    return teachers
 
-@router.delete("/deleteUser/{identifier}")
-def deleteUser(identifier: int, db: Session = Depends(get_db)):
+@router.get("/teacher/{identifier}", response_model= schemas.TeacherResponse)
+def display_a_specific_teacher(identifier: int, db: Session = Depends(get_db)):
+    teacher = db.query(models.Enseignant).filter(models.Enseignant.id == identifier).first()
+    if not teacher:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"L'enseignant ayant comme identifiant << {identifier} >> n'existe pas ")
+    
+    return teacher
+
+@router.delete("/teacher/{identifier}")
+def delete_a_teacher(identifier: int, db: Session = Depends(get_db)):
     user = db.query(models.Enseignant).filter(models.Enseignant.id == identifier).first()
     if not user:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"L'utilisateur ayant comme identifiant << {identifier} >> n'existe pas ")
