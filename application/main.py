@@ -2,8 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine
 from . import models
-from .routers import login, utilisateur 
+from .routers import dashboard_administrateur 
 
+models.Base.metadata.create_all(bind=engine)
 
 origins = ["*"]
 app = FastAPI()
@@ -14,8 +15,7 @@ app.add_middleware(
     allow_credentials = True,
     allow_headers = ["*"]
 )
-app.include_router(login.router)
-app.include_router(utilisateur.router)
+app.include_router(dashboard_administrateur.router)
 
 @app.get("/")
 def root():

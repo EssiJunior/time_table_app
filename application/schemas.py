@@ -2,46 +2,45 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional
 
-class PostBase(BaseModel):
-    title: str 
-    content: str 
-    published: bool
+#--------------------------------- Admin's Dashbord ---------------------------------#
+class CourseCreate(BaseModel):
+    code: str 
+    semester: str 
+    title: bool
     
-class PostCreate(PostBase):
-    pass
+class CourseResponse(CourseCreate):
+    ...
 
-class UserOut(BaseModel):
-    id: int
-    email: EmailStr
+class AdminCreate(BaseModel):
+    login: str
+    mot_de_passe: str
+
+class AdminResponse(BaseModel):
+    message: str
+    class Config:
+        orm_mode = True
+        
+class AdminLogin(BaseModel):
+    login: str
+    password: str
+#--------------------------------- Teacher's Dashbord  ---------------------------------#
+class TeacherCreate(BaseModel):
+    matricule: str
+    nom: str
+    password: str
+    login: str
+    
+class TeacherResponse(BaseModel):
+    nom: str
+    login: str
     created_at: datetime
     class Config:
         orm_mode = True
         
-class Post(PostBase):
-    id: int
-    created_at: datetime
-    user_id: int
-    owner: UserOut
-    
-    class Config:
-        orm_mode = True
-class PostOut(BaseModel):
-    Post: Post
-    votes: int
-    
-    class Config:
-        orm_mode = True
-
-class UserCreate(BaseModel):
-    email: EmailStr
+class TeacherLogin(BaseModel):
+    login: str
     password: str
-    
-
-    
-
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
+#--------------------------------------------------------------------------#
 
 class UserLoginValidation(BaseModel):
     email: EmailStr
@@ -49,9 +48,12 @@ class UserLoginValidation(BaseModel):
     class Config:
         orm_mode = True
 
-class Token(BaseModel):
+#--------------------------------- Utils  ---------------------------------#
+
+class TokenResponse(BaseModel):
     access_token: str
     token_type: str
+    user: str
 
 class TokenData(BaseModel):
     id: Optional[str] = None
