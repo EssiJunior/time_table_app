@@ -13,6 +13,9 @@ class Enseignant(Base):
     
     matricule = Column(String(10), primary_key = True, nullable = False)
     nom = Column(String(50), nullable = False)
+    mot_de_passe = Column(String(100),  nullable = False)
+    login = Column(String(30), nullable=False, unique=True)
+
 
 class Salle(Base):
     __tablename__ = "salle"
