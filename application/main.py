@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine
 from . import models
-from .routers import dashboard_administrateur 
+from .routers import dashboard_administrateur, dashboard_teacher 
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -16,6 +16,7 @@ app.add_middleware(
     allow_headers = ["*"]
 )
 app.include_router(dashboard_administrateur.router)
+app.include_router(dashboard_teacher.router)
 
 @app.get("/")
 def root():

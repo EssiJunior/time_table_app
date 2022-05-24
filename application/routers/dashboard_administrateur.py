@@ -34,7 +34,7 @@ def login(user_log: OAuth2PasswordRequestForm = Depends(), db: Session = Depends
     if not utils.verified(user_log.password, user.mot_de_passe):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Mot de passe incorrect")
 
-    access_token = oauth2.create_access_token(data= {"user_id": user.id})
+    access_token = oauth2.create_access_token(data= {"user_id": user.login})
     
     return {"access_token": access_token, "token_type": "Bearer", "date": datetime.now()}
 
