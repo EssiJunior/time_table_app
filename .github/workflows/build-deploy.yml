@@ -7,14 +7,14 @@ jobs:
     environment: 
       name: testing
     env:
-      DATABASE_HOSTNAME: ${{secret.DATABASE_HOSTNAME}}
-      DATABASE_PORT: ${{secret.DATABASE_PORT}}
-      DATABASE_PASSWORD: ${{secret.DATABASE_PASSWORD }}
-      DATABASE_NAME: ${{secret.DATABASE_NAME}}
-      DATABASE_USERNAME: ${{secret.DATABASE_USERNAME}}
-      SECRET_KEY: ${{secret.SECRET_KEY}}
-      ALGORITHM: ${{secret.ALGORITHM}}
-      ACCESS_TOKEN_EXPIRE_MINUTES: ${{secret.ACCESS_TOKEN_EXPIRE_MINUTES}}
+      DATABASE_HOSTNAME: ${{secrets.DATABASE_HOSTNAME}}
+      DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+      DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD }}
+      DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+      DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
+      SECRET_KEY: ${{secrets.SECRET_KEY}}
+      ALGORITHM: ${{secrets.ALGORITHM}}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${{secrets.ACCESS_TOKEN_EXPIRE_MINUTES}}
 
     runs-on: ubuntu-latest
     steps:
@@ -43,5 +43,5 @@ jobs:
       uses: akhileshns/heroku-deploy@v3.12.12
       with:
         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-        heroku_app_name: ${{secret.HEROKU_APP_NAME}}
-        heroku_email: ${{secret.HEROKU_EMAIL}} 
+        heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+        heroku_email: ${{secrets.HEROKU_EMAIL}} 
