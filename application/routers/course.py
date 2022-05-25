@@ -12,43 +12,37 @@ router = APIRouter(
 
 
 
-@router.post("/", status_code = status.HTTP_201_CREATED, response_model=schemas.TeacherResponse)
-def create_a_teacher(teacher: schemas.TeacherCreate, db: Session = Depends(get_db) ):
-    password = utils.password_generated()
-    login = utils.login_generated(teacher.matricule)
-    utils.store_teachers_in_file(teacher.nom, login, password)
-    
-    hashed_password = utils.hashed(password)
-    password = hashed_password
-    teacher = models.Enseignant(matricule=teacher.matricule, nom=teacher.nom, mot_de_passe=password, login=login)
-    db.add(teacher)
+@router.post("", status_code = status.HTTP_201_CREATED, response_model=schemas.CourseResponse)
+def create_a_course(course: schemas.CourseCreate, db: Session = Depends(get_db) ):
+    course = models.Cours(code=course.code, semestre=course.semestre, titre=course.titre, nom_seance=course.nom_seance)
+    db.add(course)
     db.commit()
-    db.refresh(teacher)
+    db.refresh(course)
     
-    return {"nom":teacher.nom, "login":login, "password": password, "created_at": datetime.now()}
+    return {"code":course.code,"semestre":course.semestre, "nom_seance":course.nom_seance, "titre": course.titre}
 
 
-@router.get("/", response_model= List[schemas.TeacherResponse])
-def display_all_teachers(db: Session = Depends(get_db)):    
-    teachers = db.query(models.Enseignant).all()
+@router.get("", response_model= List[schemas.CourseResponse])
+def display_all_courses(db: Session = Depends(get_db)):    
+    courses = db.query(models.Cours).all()
     
-    return teachers
+    return courses
 
-@router.get("/{identifier}", response_model= schemas.TeacherResponse)
-def display_a_specific_teacher(identifier: int, db: Session = Depends(get_db)):
-    teacher = db.query(models.Enseignant).filter(models.Enseignant.id == identifier).first()
-    if not teacher:
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"L'enseignant ayant comme identifiant << {identifier} >> n'existe pas ")
+@router.get("/{code}", response_model= schemas.CourseResponse)
+def display_a_specific_course(code: str, db: Session = Depends(get_db)):
+    course = db.query(models.Cours).filter(models.Cours.code == code).first()
+    if not course:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Le cours ayant pour code << {code} >> n'existe pas ")
     
-    return teacher
+    return course
 
-@router.delete("/{identifier}")
-def delete_a_teacher(identifier: int, db: Session = Depends(get_db)):
-    user = db.query(models.Enseignant).filter(models.Enseignant.id == identifier).
+@router.delete("/{code}")
+def delete_a_course(code: str, db: Session = Depends(get_db)):
+    user = db.query(models.Cours).filter(models.Cours.code == code)
     if user.first() == None:
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"L'utilisateur ayant comme identifiant << {identifier} >> n'existe pas ")
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Le cours ayant pour code << {code} >> n'existe pas ")
     else:
         user.delete(synchronize_session = False)
         db.commit()
-        return {"message": f"user with id: {identifier} deleted!"}
+        return {"message": f"Le cours ayant pour code << {code} >> est supprimé avec succes"}
     

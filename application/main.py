@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from .database import engine, get_db
 from . import models, schemas, oauth2, utils
-from .routers import teacher, room, course_period, speciality
+from .routers import teacher, room, course_period, speciality, day, course_type, course, classe
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -22,6 +22,10 @@ app.include_router(teacher.router)
 app.include_router(room.router)
 app.include_router(course_period.router)
 app.include_router(speciality.router)
+app.include_router(day.router)
+app.include_router(course_type.router)
+app.include_router(course.router)
+app.include_router(classe.router)
 
 @app.get("/")
 def root():

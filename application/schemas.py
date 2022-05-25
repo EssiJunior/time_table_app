@@ -80,13 +80,47 @@ class SpecialityResponse(SpecialityCreate):
         orm_mode = True
 
 #--------------------------------------------------------------------------------------#
+#--------------------------------- Day management  ---------------------------------#
+class DayCreate(BaseModel):
+    nom: str 
+    
+class DayResponse(DayCreate):
+    ...
+    class Config:
+        orm_mode = True
+
+#--------------------------------------------------------------------------------------#
+#--------------------------------- Course type management  ---------------------------------#
+class CourseTypeCreate(BaseModel):
+    nom: str 
+    duree: time 
+    
+class CourseTypeResponse(CourseTypeCreate):
+    ...
+    class Config:
+        orm_mode = True
+
+#--------------------------------------------------------------------------------------#
 #--------------------------------- Course management  ---------------------------------#
 class CourseCreate(BaseModel):
     code: str 
-    semester: str 
-    title: bool
+    semestre: int 
+    titre: str
+    nom_seance: str
     
 class CourseResponse(CourseCreate):
+    ...
+    class Config:
+        orm_mode = True
+
+#--------------------------------------------------------------------------------------#
+#--------------------------------- Class management  ---------------------------------#
+class ClassCreate(BaseModel):
+    code: str 
+    effectif: int 
+    nom_specialite: str
+    
+class ClassResponse(ClassCreate):
     ...
     class Config:
         orm_mode = True
