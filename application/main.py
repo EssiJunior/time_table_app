@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from .database import engine, get_db
 from . import models, schemas, oauth2, utils
-from .routers import dashboard_administrateur, dashboard_teacher 
+from .routers import teacher, room, course_period, speciality
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -16,10 +16,12 @@ app.add_middleware(
     allow_origins = origins,
     allow_methods = ["*"],
     allow_credentials = True,
-    allow_headers = ["*"]
+    allow_headers = ["*"] 
 )
-app.include_router(dashboard_administrateur.router)
-app.include_router(dashboard_teacher.router)
+app.include_router(teacher.router)
+app.include_router(room.router)
+app.include_router(course_period.router)
+app.include_router(speciality.router)
 
 @app.get("/")
 def root():
@@ -47,3 +49,13 @@ def login(user_log: OAuth2PasswordRequestForm = Depends(), db: Session = Depends
         user = "Administrateur"
         return {"access_token": access_token, "token_type": "Bearer", "user": user}
 
+@app.post("/admin", status_code = status.HTTP_201_CREATED, response_model=schemas.AdminResponse)
+def create_an_admin(admin: schemas.AdminCreate, db: Session = Depends(get_db)):
+    hashed_password = utils.hashed(admin.mot_de_passe)
+    admin.mot_de_passe = hashed_password
+    admin = models.Administrateur(**admin.dict())
+    db.add(admin)
+    db.commit()
+    db.refresh(admin)
+    
+    return {"login":admin.login, "status": "Registered"}

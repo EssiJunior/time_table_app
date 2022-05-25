@@ -6,23 +6,13 @@ from ..database import get_db
 from datetime import datetime
 
 router = APIRouter(
-    prefix="",
-    tags=["Admin's Dashbord"]
+    prefix="/course",
+    tags=["Course management"]
 )
 
-@router.post("/admin", status_code = status.HTTP_201_CREATED, response_model=schemas.AdminResponse)
-def create_an_admin(admin: schemas.AdminCreate, db: Session = Depends(get_db)):
-    hashed_password = utils.hashed(admin.mot_de_passe)
-    admin.mot_de_passe = hashed_password
-    admin = models.Administrateur(**admin.dict())
-    db.add(admin)
-    db.commit()
-    db.refresh(admin)
-    
-    return {"login":admin.login, "status": "Registered"}
 
 
-@router.post("/teacher", status_code = status.HTTP_201_CREATED, response_model=schemas.TeacherResponse)
+@router.post("/", status_code = status.HTTP_201_CREATED, response_model=schemas.TeacherResponse)
 def create_a_teacher(teacher: schemas.TeacherCreate, db: Session = Depends(get_db) ):
     password = utils.password_generated()
     login = utils.login_generated(teacher.matricule)
@@ -38,13 +28,13 @@ def create_a_teacher(teacher: schemas.TeacherCreate, db: Session = Depends(get_d
     return {"nom":teacher.nom, "login":login, "password": password, "created_at": datetime.now()}
 
 
-@router.get("/teachers", response_model= List[schemas.TeacherResponse])
-def display_a_teachers(db: Session = Depends(get_db)):    
+@router.get("/", response_model= List[schemas.TeacherResponse])
+def display_all_teachers(db: Session = Depends(get_db)):    
     teachers = db.query(models.Enseignant).all()
     
     return teachers
 
-@router.get("/teacher/{identifier}", response_model= schemas.TeacherResponse)
+@router.get("/{identifier}", response_model= schemas.TeacherResponse)
 def display_a_specific_teacher(identifier: int, db: Session = Depends(get_db)):
     teacher = db.query(models.Enseignant).filter(models.Enseignant.id == identifier).first()
     if not teacher:
@@ -52,11 +42,13 @@ def display_a_specific_teacher(identifier: int, db: Session = Depends(get_db)):
     
     return teacher
 
-@router.delete("/teacher/{identifier}")
+@router.delete("/{identifier}")
 def delete_a_teacher(identifier: int, db: Session = Depends(get_db)):
-    user = db.query(models.Enseignant).filter(models.Enseignant.id == identifier).first()
-    if not user:
+    user = db.query(models.Enseignant).filter(models.Enseignant.id == identifier).
+    if user.first() == None:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"L'utilisateur ayant comme identifiant << {identifier} >> n'existe pas ")
     else:
-        user.delete()
+        user.delete(synchronize_session = False)
+        db.commit()
         return {"message": f"user with id: {identifier} deleted!"}
+    
