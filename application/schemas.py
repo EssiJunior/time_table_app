@@ -27,11 +27,13 @@ class TokenData(BaseModel):
 class TeacherCreate(BaseModel):
     matricule: str
     nom: str
+    code_filiere: str
 
 class TeacherCreateResponse(BaseModel):
     nom: str
     login: str
     password: str
+    code_filiere: str
     created_at: datetime
     class Config:
         orm_mode = True
@@ -73,6 +75,7 @@ class CoursePeriodResponse(CoursePeriodCreate):
 class SpecialityCreate(BaseModel):
     nom: str 
     effectif: int 
+    code_classe: str
     
 class SpecialityResponse(SpecialityCreate):
     ...
@@ -107,6 +110,7 @@ class CourseCreate(BaseModel):
     semestre: int 
     titre: str
     nom_seance: str
+    code_filiere: str
     
 class CourseResponse(CourseCreate):
     ...
@@ -118,9 +122,75 @@ class CourseResponse(CourseCreate):
 class ClassCreate(BaseModel):
     code: str 
     effectif: int 
-    nom_specialite: str
+    niveau: int
+    code_filiere: str
     
 class ClassResponse(ClassCreate):
+    ...
+    class Config:
+        orm_mode = True
+
+#--------------------------------------------------------------------------------------#
+#--------------------------------- Class management  ---------------------------------#
+class LevelCreate(BaseModel):
+    numero: int
+    
+class LevelResponse(LevelCreate):
+    ...
+    class Config:
+        orm_mode = True
+
+#--------------------------------------------------------------------------------------#
+#--------------------------------- Filiere management  ---------------------------------#
+class FiliereCreate(BaseModel):
+    code: str 
+    nom: str 
+    
+class FiliereCreateResponse(FiliereCreate):
+    created_at: datetime
+    class Config:
+        orm_mode = True
+
+class FiliereResponse(FiliereCreate):
+    ...
+    class Config:
+        orm_mode = True
+
+#--------------------------------------------------------------------------------------#
+#--------------------------------- To Program (association) management  ---------------------------------#
+class ToProgramCreate(BaseModel):
+    code_classe: str 
+    code_cours: str 
+    matricule_enseignant: str
+    id_plage: int
+    code_salle: str
+    nom_jour: str
+    
+class ToProgramCreateResponse(ToProgramCreate):
+    created_at: datetime
+    class Config:
+        orm_mode = True
+
+class ToProgramResponse(ToProgramCreate):
+    ...
+    class Config:
+        orm_mode = True
+
+#--------------------------------------------------------------------------------------#
+#--------------------------------- Activity (association) management  ---------------------------------#
+class ActivityCreate(BaseModel):
+    nom: str 
+    matricule_enseignant: str
+    id_plage: int
+    code_salle: str
+    nom_jour: str
+    
+class ActivityCreateResponse(ActivityCreate):
+    created_at: datetime
+    class Config:
+        orm_mode = True
+
+class ActivityResponse(ActivityCreate):
     ...
     class Config:
         orm_mode = True

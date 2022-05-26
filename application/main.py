@@ -5,7 +5,8 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from .database import engine, get_db
 from . import models, schemas, oauth2, utils
-from .routers import teacher, room, course_period, speciality, day, course_type, course, classe
+from .routers import (teacher, room, course_period, speciality, day,
+        course_type, course, classe, level, filiere, to_program, activity)
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -26,10 +27,14 @@ app.include_router(day.router)
 app.include_router(course_type.router)
 app.include_router(course.router)
 app.include_router(classe.router)
+app.include_router(level.router)
+app.include_router(filiere.router)
+app.include_router(to_program.router)
+app.include_router(activity.router)
 
 @app.get("/")
 def root():
-    return {"message": "Hello world, by a deployer"}
+    return {"message": "Hello world, by the BI-deployer"}
 
 @app.post("/login", response_model=schemas.LoginResponse)
 def login(user_log: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):

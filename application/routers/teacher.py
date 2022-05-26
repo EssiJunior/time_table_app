@@ -20,12 +20,12 @@ def create_a_teacher(teacher: schemas.TeacherCreate, db: Session = Depends(get_d
     
     hashed_password = utils.hashed(password)
     password = hashed_password
-    teacher = models.Enseignant(matricule=teacher.matricule, nom=teacher.nom, mot_de_passe=password, login=login)
+    teacher = models.Enseignant(matricule=teacher.matricule, nom=teacher.nom, mot_de_passe=password, login=login, code_filiere=teacher.code_filiere)
     db.add(teacher)
     db.commit()
     db.refresh(teacher)
     
-    return {"nom":teacher.nom, "login":login, "password": password, "created_at": datetime.now()}
+    return {"nom":teacher.nom, "login":login, "password": password,"code_filiere":teacher.code_filiere, "created_at": datetime.now()}
 
 
 @router.get("", response_model= List[schemas.TeacherResponse])
@@ -50,5 +50,5 @@ def delete_a_teacher(matricule: str, db: Session = Depends(get_db)):
     else:
         user.delete(synchronize_session = False)
         db.commit()
-        return {"message": f"L'enseignant ayant comme matricule: {matricule} est supprimé avec succes"}
+        return {"message": f"L'enseignant ayant pour matricule: {matricule} est supprimé avec succes"}
     

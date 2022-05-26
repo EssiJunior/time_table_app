@@ -14,12 +14,12 @@ router = APIRouter(
 
 @router.post("", status_code = status.HTTP_201_CREATED, response_model=schemas.SpecialityResponse)
 def create_a_speciality(speciality: schemas.SpecialityCreate, db: Session = Depends(get_db) ):  
-    speciality = models.Specialite(nom=speciality.nom, effectif=speciality.effectif)
+    speciality = models.Specialite(nom=speciality.nom, effectif=speciality.effectif, code_classe=speciality.code_classe)
     db.add(speciality)
     db.commit()
     db.refresh(speciality)
     
-    return {"nom": speciality.nom,"effectif": speciality.effectif}
+    return {"nom": speciality.nom,"effectif": speciality.effectif, "code_classe": speciality.code_classe}
 
 
 @router.get("", response_model= List[schemas.SpecialityResponse])

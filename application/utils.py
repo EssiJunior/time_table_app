@@ -27,5 +27,5 @@ def login_generated(matricule: str):
 
 def store_teachers_in_file(nom, login, password):
     file = open("teachers.txt", "a+")
-    file.write(f"|Nom: {nom} \t\t| Login: {login} \t\t| Mot de passe: {password}\t\t|")
+    file.write(f"|Nom: {nom} \t\t| Login: {login} \t\t| Mot de passe: {password}\t\t|\n")
     file.close()

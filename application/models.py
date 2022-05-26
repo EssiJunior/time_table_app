@@ -65,13 +65,13 @@ class Classe(Base):
     
     code = Column(String(10), primary_key = True, nullable = False)
     effectif = Column(Integer, nullable = False)   
-    niveau = Column(String(6), ForeignKey("niveau.numero", ondelete="CASCADE"), nullable = False)
+    niveau = Column(Integer, ForeignKey("niveau.numero", ondelete="CASCADE"), nullable = False)
     code_filiere = Column(String(6), ForeignKey("filiere.code", ondelete="CASCADE"), nullable = False)
 
 class Niveau(Base):
     __tablename__ = "niveau"
     
-    numero = Column(String(6), primary_key = True, nullable = False)
+    numero = Column(Integer, primary_key = True, nullable = False)
 
 class Filiere(Base):
     __tablename__ = "filiere"
@@ -85,7 +85,7 @@ class Programmer(Base):
     code_classe = Column(String(10), ForeignKey("classe.code", ondelete="CASCADE"), primary_key = True, nullable = False)
     code_cours = Column(String(10), ForeignKey("cours.code", ondelete="CASCADE"), primary_key = True, nullable = False)
     matricule_enseignant = Column(String(10), ForeignKey("enseignant.matricule", ondelete="CASCADE"), primary_key = True, nullable = False)
-    id_plage = Column(Integer, ForeignKey("plage_horaire.id_plage", ondelete="CASCADE"), nullable = False)
+    id_plage = Column(Integer, ForeignKey("plage_horaire.id_plage", ondelete="CASCADE"), primary_key = True, nullable = False)
     code_salle= Column(String(50), ForeignKey("salle.code", ondelete="CASCADE"), primary_key = True, nullable = False)
     nom_jour = Column(String(10), ForeignKey("jour.nom", ondelete="CASCADE"), primary_key = True, nullable = False)
 

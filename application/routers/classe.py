@@ -14,12 +14,12 @@ router = APIRouter(
 
 @router.post("", status_code = status.HTTP_201_CREATED, response_model=schemas.ClassResponse)
 def create_a_class(classe: schemas.ClassCreate, db: Session = Depends(get_db) ):
-    classe = models.Classe(code=classe.code, effectif=classe.effectif,  nom_specialite=classe.nom_specialite)
+    classe = models.Classe(code=classe.code, effectif=classe.effectif,  niveau=classe.niveau, code_filiere=classe.code_filiere)
     db.add(classe)
     db.commit()
     db.refresh(classe)
     
-    return {"code":classe.code,"effectif":classe.effectif, "nom_specialite":classe.nom_specialite}
+    return {"code":classe.code,"effectif":classe.effectif, "niveau":classe.niveau, "code_filiere":classe.code_filiere}
 
 
 @router.get("", response_model= List[schemas.ClassResponse])

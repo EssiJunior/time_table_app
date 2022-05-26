@@ -14,12 +14,12 @@ router = APIRouter(
 
 @router.post("", status_code = status.HTTP_201_CREATED, response_model=schemas.CourseResponse)
 def create_a_course(course: schemas.CourseCreate, db: Session = Depends(get_db) ):
-    course = models.Cours(code=course.code, semestre=course.semestre, titre=course.titre, nom_seance=course.nom_seance)
+    course = models.Cours(code=course.code, semestre=course.semestre, titre=course.titre, nom_seance=course.nom_seance, code_filiere=course.code_filiere)
     db.add(course)
     db.commit()
     db.refresh(course)
     
-    return {"code":course.code,"semestre":course.semestre, "nom_seance":course.nom_seance, "titre": course.titre}
+    return {"code":course.code,"semestre":course.semestre, "nom_seance":course.nom_seance, "titre": course.titre, "code_filiere":course.code_filiere}
 
 
 @router.get("", response_model= List[schemas.CourseResponse])
