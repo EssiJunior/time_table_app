@@ -15,6 +15,7 @@ class Enseignant(Base):
     nom = Column(String(50), nullable = False)
     mot_de_passe = Column(String(100),  nullable = False)
     login = Column(String(30), nullable=False, unique=True)
+    code_filiere = Column(String(6), ForeignKey("filiere.code", ondelete="CASCADE"), nullable = False)
 
 
 class Salle(Base):
@@ -36,6 +37,8 @@ class Specialite(Base):
     
     nom = Column(String(50), primary_key = True, nullable = False)
     effectif = Column(Integer, nullable = False)
+    code_classe = Column(String(10), ForeignKey("classe.code", ondelete="CASCADE"), nullable = False)
+
 
 class Jour(Base):
     __tablename__ = "jour"
@@ -55,28 +58,26 @@ class Cours(Base):
     semestre = Column(Integer, nullable = False)
     titre = Column(String(50), nullable = False)
     nom_seance = Column(String(50), ForeignKey("type_seance.nom", ondelete="CASCADE"), nullable = False)
+    code_filiere = Column(String(6), ForeignKey("filiere.code", ondelete="CASCADE"), nullable = False)
 
 class Classe(Base):
     __tablename__ = "classe"
     
     code = Column(String(10), primary_key = True, nullable = False)
     effectif = Column(Integer, nullable = False)   
-    nom_specialite = Column(String(50), ForeignKey("specialite.nom", ondelete="CASCADE"), nullable = False)
+    niveau = Column(String(6), ForeignKey("niveau.numero", ondelete="CASCADE"), nullable = False)
+    code_filiere = Column(String(6), ForeignKey("filiere.code", ondelete="CASCADE"), nullable = False)
 
 class Niveau(Base):
     __tablename__ = "niveau"
     
     numero = Column(String(6), primary_key = True, nullable = False)
-    code_classe = Column(String(10), ForeignKey("classe.code", ondelete="CASCADE"), nullable = False)
 
 class Filiere(Base):
     __tablename__ = "filiere"
     
     code = Column(String(6), primary_key = True, nullable = False)
     nom = Column(String(25), nullable = False)
-    code_classe = Column(String(10), ForeignKey("classe.code", ondelete="CASCADE"), nullable = False)
-    code_cours = Column(String(10), ForeignKey("cours.code", ondelete="CASCADE"), nullable = False)
-    matricule_enseignant = Column(String(10), ForeignKey("enseignant.matricule", ondelete="CASCADE"), nullable = False)
 
 class Programmer(Base):
     __tablename__ = "programmer"
