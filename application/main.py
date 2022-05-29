@@ -34,7 +34,7 @@ app.include_router(activity.router)
 
 @app.get("/")
 def root():
-    return {"message": "Hello world, by the BI-deployer"}
+    return {"message": "Hello world, by the BI-deployer... Lock functionality OK!"}
 
 @app.post("/login", response_model=schemas.LoginResponse)
 def login(user_log: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
