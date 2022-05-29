@@ -9,49 +9,53 @@ router = APIRouter(
     tags=["Day management"]
 )
 
-
-
 @router.post("", status_code = status.HTTP_201_CREATED, response_model=schemas.DayResponse)
 def create_a_day(day: schemas.DayCreate, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user) ):  
-    day = models.Jour(nom=day.nom)
-    db.add(day)
-    db.commit()
-    db.refresh(day)
-    
-    print("Current Administrator: ",current_user.login)
-    return {"nom": day.nom}
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Administrateur):
+        day = models.Jour(nom=day.nom)
+        db.add(day)
+        db.commit()
+        db.refresh(day)
+        return {"nom": day.nom}
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 
 @router.get("", response_model= List[schemas.DayResponse])
 def display_all_days(db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)):    
-    day = db.query(models.Jour).all()
-    
-    print("Current Administrator: ",current_user.login)
-    return day
+        current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Administrateur):
+        day = db.query(models.Jour).all()
+        return day
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 @router.get("/{nom}", response_model= schemas.DayResponse)
 def display_a_specific_day(nom: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):
-    print("Current Administrator: ",current_user.login)
-    
-    day = db.query(models.Jour).filter(models.Jour.nom == nom).first()
-    if not day:
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucun jour intitulée << {nom} >>")
-    
-    return day
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Administrateur):
+        day = db.query(models.Jour).filter(models.Jour.nom == nom).first()
+        if not day:
+            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucun jour intitulée << {nom} >>")
+        return day
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 @router.delete("/{nom}")
 def delete_a_day(nom: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):
-    print("Current Administrator: ",current_user.login)
-    
-    day = db.query(models.Jour).filter(models.Jour.nom == nom)
-    if day.first() == None:
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucun jour intitulée << {nom} >>")
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Administrateur):
+        day = db.query(models.Jour).filter(models.Jour.nom == nom)
+        if day.first() == None:
+            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucun jour intitulée << {nom} >>")
+        else:
+            day.delete(synchronize_session = False)
+            db.commit()
+            return {"message": f"le jour << {nom} >> est supprimé avec succes."}
     else:
-        day.delete(synchronize_session = False)
-        db.commit()
-        return {"message": f"le jour << {nom} >> est supprimé avec succes."}
-    
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")

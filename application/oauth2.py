@@ -41,12 +41,10 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="could not validate credentials"
     , headers= {"WWW-Authenticate":"Bearer"})
     tokenD = verify_access_token(token, credentials_exception)
-    user = db.query(models.Administrateur).filter(models.Administrateur.login == tokenD.id).first()
-    return user
-    
-def get_current_user_if_teacher(token: str = Depends(oauth2_scheme), db: Session = Depends(database.get_db)):
-    credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="could not validate credentials"
-    , headers= {"WWW-Authenticate":"Bearer"})
-    tokenD = verify_access_token(token, credentials_exception)
-    user = db.query(models.Enseignant).filter(models.Enseignant.login == tokenD.id).first()
-    return user
+    admin = db.query(models.Administrateur).filter(models.Administrateur.login == tokenD.id).first()
+    if admin == None:
+        teacher = db.query(models.Enseignant).filter(models.Enseignant.login == tokenD.id).first()
+        return teacher
+    else:
+        return admin
+

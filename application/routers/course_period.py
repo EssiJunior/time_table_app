@@ -10,49 +10,56 @@ router = APIRouter(
     tags=["Course period management"]
 )
 
-
-
 @router.post("", status_code = status.HTTP_201_CREATED, response_model=schemas.CoursePeriodResponse)
 def create_a_course_period(period: schemas.CoursePeriodCreate, db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user) ):  
-    period = models.PlageHoraire(heure_debut=period.heure_debut, heure_fin=period.heure_fin)
-    db.add(period)
-    db.commit()
-    db.refresh(period)
-    
-    print("Current Administrator: ",current_user.login)
-    return {"id_plage": period.id_plage,"heure_debut": period.heure_debut, "heure_fin":period.heure_fin}
+        current_user: models.Administrateur=Depends(oauth2.get_current_user) ): 
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Administrateur):
+        period = models.PlageHoraire(heure_debut=period.heure_debut, heure_fin=period.heure_fin)
+        db.add(period)
+        db.commit()
+        db.refresh(period)
+        return {"id_plage": period.id_plage,"heure_debut": period.heure_debut, "heure_fin":period.heure_fin}
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 
 @router.get("", response_model= List[schemas.CoursePeriodResponse])
 def display_all_course_period(db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):    
-    period = db.query(models.PlageHoraire).all()
-    
-    print("Current Administrator: ",current_user.login)
-    return period
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Administrateur):
+        period = db.query(models.PlageHoraire).all()
+        return period
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+
 
 @router.get("/{id_plage}", response_model= schemas.CoursePeriodResponse)
 def display_a_specific_course_period(id_plage: int, db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)):
-    print("Current Administrator: ",current_user.login)
-    
-    period = db.query(models.PlageHoraire).filter(models.PlageHoraire.id_plage == id_plage).first()
-    if not period:
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucune plage horaire identifié par << {id_plage} >>")
-    
-    return period
+        current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Administrateur):
+        period = db.query(models.PlageHoraire).filter(models.PlageHoraire.id_plage == id_plage).first()
+        if not period:
+            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucune plage horaire identifié par << {id_plage} >>")
+        
+        return period
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+
 
 @router.delete("/{id_plage}")
 def delete_a_course_period(id_plage: int, db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)):
-    print("Current Administrator: ",current_user.login)
-    
-    period = db.query(models.PlageHoraire).filter(models.PlageHoraire.id_plage == id_plage)
-    if period.first() == None:
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucune plage horaire identifié par << {id_plage} >>")
+        current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Administrateur):
+        period = db.query(models.PlageHoraire).filter(models.PlageHoraire.id_plage == id_plage)
+        if period.first() == None:
+            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucune plage horaire identifié par << {id_plage} >>")
+        else:
+            period.delete(synchronize_session = False)
+            db.commit()
+            return {"message": f"la plage horaire identifiée << {id_plage} >> est supprimé avec succes."}
     else:
-        period.delete(synchronize_session = False)
-        db.commit()
-        return {"message": f"la plage horaire identifiée << {id_plage} >> est supprimé avec succes."}
-    
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
