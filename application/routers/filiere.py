@@ -25,14 +25,9 @@ def create_a_filiere(filiere: schemas.FiliereCreate, db: Session = Depends(get_d
 
 
 @router.get("", response_model= List[schemas.FiliereResponse])
-def display_all_filieres(db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)):   
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        filieres = db.query(models.Filiere).all()
-        return filieres
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+def display_all_filieres(db: Session = Depends(get_db)):  
+    filieres = db.query(models.Filiere).all()
+    return filieres
 
 @router.get("/{code}", response_model= schemas.FiliereResponse)
 def display_a_specific_filiere(code: str, db: Session = Depends(get_db),
@@ -42,7 +37,6 @@ def display_a_specific_filiere(code: str, db: Session = Depends(get_db),
         filiere = db.query(models.Filiere).filter(models.Filiere.code == code).first()
         if not filiere:
             raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"La Filiere codée << {code} >> n'existe pas ")
-        
         return filiere
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")

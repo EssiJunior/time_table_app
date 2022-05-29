@@ -25,14 +25,9 @@ def create_a_room(room: schemas.RoomCreate, db: Session = Depends(get_db),
 
 
 @router.get("", response_model= List[schemas.RoomResponse])
-def display_all_rooms(db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)):    
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        rooms = db.query(models.Salle).all()
-        return rooms
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+def display_all_rooms(db: Session = Depends(get_db)):
+    rooms = db.query(models.Salle).all()
+    return rooms
 
 @router.get("/{code}", response_model= schemas.RoomResponse)
 def display_a_specific_room(code: str, db: Session = Depends(get_db),
