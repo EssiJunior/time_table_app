@@ -1,5 +1,5 @@
 from fastapi import status, Depends , HTTPException, APIRouter
-from .. import models, schemas, utils
+from .. import models, schemas, oauth2
 from typing import List 
 from sqlalchemy.orm import Session
 from ..database import get_db
@@ -13,23 +13,30 @@ router = APIRouter(
 
 
 @router.post("", status_code = status.HTTP_201_CREATED, response_model=schemas.SpecialityResponse)
-def create_a_speciality(speciality: schemas.SpecialityCreate, db: Session = Depends(get_db) ):  
+def create_a_speciality(speciality: schemas.SpecialityCreate, db: Session = Depends(get_db),
+        current_user: models.Administrateur=Depends(oauth2.get_current_user)):  
     speciality = models.Specialite(nom=speciality.nom, effectif=speciality.effectif, code_classe=speciality.code_classe)
     db.add(speciality)
     db.commit()
     db.refresh(speciality)
     
+    print("Current Administrator: ",current_user.login)
     return {"nom": speciality.nom,"effectif": speciality.effectif, "code_classe": speciality.code_classe}
 
 
 @router.get("", response_model= List[schemas.SpecialityResponse])
-def display_all_specialities(db: Session = Depends(get_db)):    
+def display_all_specialities(db: Session = Depends(get_db),
+        current_user: models.Administrateur=Depends(oauth2.get_current_user)):    
     speciality = db.query(models.Specialite).all()
     
+    print("Current Administrator: ",current_user.login)
     return speciality
 
 @router.get("/{nom}", response_model= schemas.SpecialityResponse)
-def display_a_specific_speciality(nom: str, db: Session = Depends(get_db)):
+def display_a_specific_speciality(nom: str, db: Session = Depends(get_db),
+        current_user: models.Administrateur=Depends(oauth2.get_current_user)):
+    print("Current Administrator: ",current_user.login)
+    
     speciality = db.query(models.Specialite).filter(models.Specialite.nom == nom).first()
     if not speciality:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucune spécialité intitulée << {nom} >>")
@@ -37,7 +44,10 @@ def display_a_specific_speciality(nom: str, db: Session = Depends(get_db)):
     return speciality
 
 @router.delete("/{nom}")
-def delete_a_speciality(nom: str, db: Session = Depends(get_db)):
+def delete_a_speciality(nom: str, db: Session = Depends(get_db),
+        current_user: models.Administrateur=Depends(oauth2.get_current_user)):
+    print("Current Administrator: ",current_user.login)
+    
     speciality = db.query(models.Specialite).filter(models.Specialite.nom == nom)
     if speciality.first() == None:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucune spécialité intitulée << {nom} >>")

@@ -37,10 +37,16 @@ def verify_access_token(token: str, credentials_exception):
         raise credentials_exception
     return tokenData
 
-# def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(database.get_db)):
-#    credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="could not validate credentials"
-#    , headers= {"WWW-Authenticate":"Bearer"})
-#    tokenD = verify_access_token(token, credentials_exception)
-#    user = db.query(models.Utilisateur).filter(models.Utilisateur.id == tokenD.id).first()
-#    
-#    return user
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(database.get_db)):
+    credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="could not validate credentials"
+    , headers= {"WWW-Authenticate":"Bearer"})
+    tokenD = verify_access_token(token, credentials_exception)
+    user = db.query(models.Administrateur).filter(models.Administrateur.login == tokenD.id).first()
+    return user
+    
+def get_current_user_if_teacher(token: str = Depends(oauth2_scheme), db: Session = Depends(database.get_db)):
+    credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="could not validate credentials"
+    , headers= {"WWW-Authenticate":"Bearer"})
+    tokenD = verify_access_token(token, credentials_exception)
+    user = db.query(models.Enseignant).filter(models.Enseignant.login == tokenD.id).first()
+    return user
