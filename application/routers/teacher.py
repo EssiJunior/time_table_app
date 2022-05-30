@@ -18,18 +18,18 @@ def create_a_teacher(teacher: schemas.TeacherCreate, db: Session = Depends(get_d
     print("Current User: ",type(current_user))
     if isinstance(current_user, models.Administrateur):
         
-        password = utils.password_generated()
+        password_Gen = utils.password_generated()
         login = utils.login_generated(teacher.matricule)
-        utils.store_teachers_in_file(teacher.nom, login, password)
+        utils.store_teachers_in_file(teacher.nom, login, password_Gen)
         
-        hashed_password = utils.hashed(password)
+        hashed_password = utils.hashed(password_Gen)
         password = hashed_password
         teacher = models.Enseignant(matricule=teacher.matricule, nom=teacher.nom, mot_de_passe=password, login=login, code_filiere=teacher.code_filiere)
         db.add(teacher)
         db.commit()
         db.refresh(teacher)
             
-        return {"nom":teacher.nom, "login":login, "password": password,"code_filiere":teacher.code_filiere, "created_at": datetime.now()}
+        return {"nom":teacher.nom, "login":login, "password": password_Gen,"code_filiere":teacher.code_filiere, "created_at": datetime.now()}
 
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
