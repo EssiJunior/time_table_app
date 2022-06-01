@@ -8,7 +8,7 @@ from . import models, schemas, oauth2, utils
 from .routers import (teacher, room, course_period, speciality, day,
         course_type, course, classe, level, filiere, to_program, activity)
 
-models.Base.metadata.create_all(bind=engine)
+#models.Base.metadata.create_all(bind=engine)
 
 origins = ["*"]
 app = FastAPI()
