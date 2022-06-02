@@ -70,8 +70,8 @@ def update_a_level(code: str, level: schemas.LevelCreate, db: Session = Depends(
         response = db.query(models.Niveau).filter(models.Niveau.code == code)
         if response.first() == None:
             raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"La niveau << {code} >> n'existe pas ")
-        response.update(level.dict(),synchronize_session="False")
+        response.update(level.dict(),synchronize_session=False)
         db.commit()
-        return response.first()
+        return level
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")

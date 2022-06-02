@@ -64,8 +64,8 @@ def update_a_filiere(code: str, filiere: schemas.FiliereCreate, db: Session = De
         response = db.query(models.Filiere).filter(models.Filiere.code == code)
         if response.first() == None:
             raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Il n'existe aucune Filiere ayant pour code << {code} >>")
-        response.update(filiere.dict(),synchronize_session="False")
+        response.update(filiere.dict(),synchronize_session=False)
         db.commit()
-        return response.first()
+        return filiere
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")

@@ -19,7 +19,7 @@ def create_a_room(room: schemas.RoomCreate, db: Session = Depends(get_db),
         db.add(room)
         db.commit()
         db.refresh(room)
-        return {"code": room.code, "effectif":room.effectif,"created_at": datetime.now()}
+        return room
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
@@ -55,3 +55,17 @@ def delete_a_room(code: str, db: Session = Depends(get_db),
             return {"message": f"la salle << {code} >> est supprimé avec succes."}
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+
+@router.put("", response_model=schemas.RoomResponse)
+def update_a_room(code: str, room: schemas.RoomCreate, db: Session = Depends(get_db),
+        current_user: models.Administrateur=Depends(oauth2.get_current_user)):
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Administrateur):
+        response = db.query(models.Salle).filter(models.Salle.code == code)
+        if response.first() == None:
+            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Il n'existe aucune salle ayant pour code << {code} >>")
+        response.update(room.dict(),synchronize_session=False)
+        db.commit()
+        return room
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")

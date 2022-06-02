@@ -62,3 +62,17 @@ def delete_a_course_type(nom: str, db: Session = Depends(get_db),
             return {"message": f"le type de seance << {nom} >> est supprimé avec succes."}
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+
+@router.put("", response_model=schemas.CourseTypeResponse)
+def update_a_course_type(nom: str, course_type: schemas.CourseTypeCreate, db: Session = Depends(get_db),
+        current_user: models.Administrateur=Depends(oauth2.get_current_user)):
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Administrateur):
+        response = db.query(models.TypeSeance).filter(models.TypeSeance.nom == nom)
+        if response.first() == None:
+            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"<< {nom} >> n'es pas un type de séance valide")
+        response.update(course_type.dict(), synchronize_session=False)
+        db.commit()
+        return course_type
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")

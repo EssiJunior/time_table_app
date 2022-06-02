@@ -66,8 +66,8 @@ def update_a_speciality(id: int, speciality: schemas.SpecialityCreate, db: Sessi
         response = db.query(models.Specialite).filter(models.Specialite.id == id)
         if response.first() == None:
             raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Il n'existe aucune Specialite identifié par << {id} >>")
-        response.update(speciality.dict(),synchronize_session="False")
+        response.update(speciality.dict(),synchronize_session=False)
         db.commit()
-        return response.first()
+        return speciality
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")

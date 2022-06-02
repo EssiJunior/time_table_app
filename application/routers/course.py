@@ -68,8 +68,8 @@ def update_a_course(code: str, course: schemas.CourseCreate, db: Session = Depen
         response = db.query(models.Cours).filter(models.Cours.code == code)
         if response.first() == None:
             raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Il n'existe aucun cours ayant pour code << {code} >>")
-        response.update(course.dict(),synchronize_session="False")
+        response.update(course.dict(),synchronize_session=False)
         db.commit()
-        return response.first()
+        return course
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")

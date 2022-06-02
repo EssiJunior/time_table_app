@@ -54,7 +54,7 @@ class PlageHoraire(Base):
     heure_debut = Column(Time(timezone=False), nullable=False, server_default= text("now()"))
     heure_fin = Column(Time(timezone=False),  nullable=False, server_default= text("now()"))
 
-class Programmer(Base): # Here
+class Programmer(Base): 
     __tablename__ = "programmer"
 
     code_cours = Column(String(10), ForeignKey("cours.code", ondelete="CASCADE", onupdate="CASCADE"), primary_key = True, nullable = False)

@@ -20,16 +20,16 @@ def create_a_teacher(teacher: schemas.TeacherCreate, db: Session = Depends(get_d
         
         password_Gen = utils.password_generated()
         login = utils.login_generated(teacher.matricule)
-        utils.store_teachers_in_file(teacher.nom, login, password_Gen)
+        utils.store_teachers_in_file(teacher.matricule, login, password_Gen)
         
         hashed_password = utils.hashed(password_Gen)
         password = hashed_password
-        teacher = models.Enseignant(matricule=teacher.matricule, nom=teacher.nom, mot_de_passe=password, login=login, code_filiere=teacher.code_filiere)
+        teacher = models.Enseignant(matricule=teacher.matricule, nom=teacher.nom, mot_de_passe=password, email=teacher.email, login=login, code_filiere=teacher.code_filiere)
         db.add(teacher)
         db.commit()
         db.refresh(teacher)
             
-        return {"nom":teacher.nom, "login":login, "password": password_Gen,"code_filiere":teacher.code_filiere, "created_at": datetime.now()}
+        return {"nom":teacher.nom, "login":login, "email":teacher.email, "password": password_Gen,"code_filiere":teacher.code_filiere, "created_at": datetime.now()}
 
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
@@ -71,4 +71,17 @@ def delete_a_teacher(matricule: str, db: Session = Depends(get_db),
             return {"message": f"L'enseignant ayant pour matricule: {matricule} est supprimé avec succes"}
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
- 
+
+@router.put("", response_model=schemas.TeacherResponse)
+def update_a_teacher(matricule: str, teacher: schemas.TeacherCreate, db: Session = Depends(get_db),
+        current_user: models.Administrateur=Depends(oauth2.get_current_user)):
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Administrateur):
+        response = db.query(models.Enseignant).filter(models.Enseignant.matricule == matricule)
+        if response.first() == None:
+            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"L'enseignant ayant pour matricule << {matricule} >> n'existe pas")
+        response.update(teacher.dict(),synchronize_session=False)
+        db.commit()
+        return teacher
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")
