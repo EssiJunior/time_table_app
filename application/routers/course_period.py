@@ -63,3 +63,17 @@ def delete_a_course_period(id_plage: int, db: Session = Depends(get_db),
             return {"message": f"la plage horaire identifiée << {id_plage} >> est supprimé avec succes."}
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+
+@router.put("", response_model=schemas.CoursePeriodResponse)
+def update_a_course_period(id_plage: int, course_period: schemas.CoursePeriodCreate, db: Session = Depends(get_db),
+        current_user: models.Administrateur=Depends(oauth2.get_current_user)):
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Administrateur):
+        response = db.query(models.PlageHoraire).filter(models.PlageHoraire.id_plage == id_plage)
+        if response.first() == None:
+            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Il n'existe aucune plage horaire identifié par << {id_plage} >>")
+        response.update(course_period.dict(),synchronize_session="False")
+        db.commit()
+        return response.first()
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")

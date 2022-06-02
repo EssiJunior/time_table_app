@@ -55,3 +55,17 @@ def delete_a_class(code: str, db: Session = Depends(get_db),
             return {"message": f"Le classe ayant pour code << {code} >> est supprimé avec succes"}
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+
+@router.put("", response_model=schemas.ClassResponse)
+def update_a_class(code: str, activity: schemas.ClassCreate, db: Session = Depends(get_db),
+        current_user: models.Administrateur=Depends(oauth2.get_current_user)):
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Administrateur):
+        response = db.query(models.Classe).filter(models.Classe.code == code)
+        if response.first() == None:
+            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Il n'existe aucune classe ayant pour code << {code} >>")
+        response.update(activity.dict(),synchronize_session="False")
+        db.commit()
+        return response.first()
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")

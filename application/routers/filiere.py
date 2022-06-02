@@ -55,3 +55,17 @@ def delete_a_filiere(code: str, db: Session = Depends(get_db),
             return {"message": f"la filiere codée << {code} >> est supprimé avec succes."}
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+
+@router.put("", response_model=schemas.FiliereResponse)
+def update_a_filiere(code: str, filiere: schemas.FiliereCreate, db: Session = Depends(get_db),
+        current_user: models.Administrateur=Depends(oauth2.get_current_user)):
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Administrateur):
+        response = db.query(models.Filiere).filter(models.Filiere.code == code)
+        if response.first() == None:
+            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Il n'existe aucune Filiere ayant pour code << {code} >>")
+        response.update(filiere.dict(),synchronize_session="False")
+        db.commit()
+        return response.first()
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")

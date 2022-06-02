@@ -63,3 +63,17 @@ def delete_a_activity(nom: str, db: Session = Depends(get_db),
             return {"message": f"l'activité ayant << {nom} >> est supprimé avec succes."}
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Enseignant peut realiser cette tache.")
+
+@router.put("", response_model=schemas.ActivityResponse)
+def update_an_activity(nom: str, activity: schemas.ActivityCreate, db: Session = Depends(get_db),
+        current_user: models.Enseignant=Depends(oauth2.get_current_user)):
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Enseignant):
+        response = db.query(models.Activite).filter(models.Activite.nom == nom)
+        if response.first() == None:
+            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucune activité intitulée << {nom} >>")
+        response.update(activity.dict(),synchronize_session="False")
+        db.commit()
+        return response.first()
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Enseignant peut realiser cette tache.")

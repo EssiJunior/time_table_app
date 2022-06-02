@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from datetime import datetime, time
+from datetime import datetime, time, date
 from typing import Optional
 
 #---------------------------------- Main operations ----------------------------------#
@@ -23,54 +23,6 @@ class LoginResponse(BaseModel):
 class TokenData(BaseModel):
     id: Optional[str] = None
 #---------------------------------------------------------------------------------------#
-#--------------------------------- Teacher management  ---------------------------------#
-class TeacherCreate(BaseModel):
-    matricule: str
-    nom: str
-    code_filiere: str
-
-class TeacherCreateResponse(BaseModel):
-    nom: str
-    login: str
-    password: str
-    code_filiere: str
-    created_at: datetime
-    class Config:
-        orm_mode = True
-
-class TeacherResponse(TeacherCreate):
-    ...
-    class Config:
-        orm_mode = True
-        
-#--------------------------------------------------------------------------------------#
-#--------------------------------- Room management  ---------------------------------#
-class RoomCreate(BaseModel):
-    code: str 
-    effectif: int 
-    
-class RoomCreateResponse(RoomCreate):
-    created_at: datetime
-    class Config:
-        orm_mode = True
-
-class RoomResponse(RoomCreate):
-    ...
-    class Config:
-        orm_mode = True
-
-#--------------------------------------------------------------------------------------#
-#--------------------------------- Course's hour management  ---------------------------------#
-class CoursePeriodCreate(BaseModel):
-    heure_debut: time 
-    heure_fin: time 
-    
-class CoursePeriodResponse(CoursePeriodCreate):
-    id_plage: int
-    class Config:
-        orm_mode = True
-
-#--------------------------------------------------------------------------------------#
 #--------------------------------- Speciality management  ---------------------------------#
 class SpecialityCreate(BaseModel):
     nom: str 
@@ -78,42 +30,7 @@ class SpecialityCreate(BaseModel):
     code_classe: str
     
 class SpecialityResponse(SpecialityCreate):
-    ...
-    class Config:
-        orm_mode = True
-
-#--------------------------------------------------------------------------------------#
-#--------------------------------- Day management  ---------------------------------#
-class DayCreate(BaseModel):
-    nom: str 
-    
-class DayResponse(DayCreate):
-    ...
-    class Config:
-        orm_mode = True
-
-#--------------------------------------------------------------------------------------#
-#--------------------------------- Course type management  ---------------------------------#
-class CourseTypeCreate(BaseModel):
-    nom: str 
-    duree: time 
-    
-class CourseTypeResponse(CourseTypeCreate):
-    ...
-    class Config:
-        orm_mode = True
-
-#--------------------------------------------------------------------------------------#
-#--------------------------------- Course management  ---------------------------------#
-class CourseCreate(BaseModel):
-    code: str 
-    semestre: int 
-    titre: str
-    nom_seance: str
-    code_filiere: str
-    
-class CourseResponse(CourseCreate):
-    ...
+    id: int
     class Config:
         orm_mode = True
 
@@ -131,9 +48,9 @@ class ClassResponse(ClassCreate):
         orm_mode = True
 
 #--------------------------------------------------------------------------------------#
-#--------------------------------- Class management  ---------------------------------#
+#--------------------------------- Level management  ---------------------------------#
 class LevelCreate(BaseModel):
-    numero: int
+    code: str
     
 class LevelResponse(LevelCreate):
     ...
@@ -157,11 +74,37 @@ class FiliereResponse(FiliereCreate):
         orm_mode = True
 
 #--------------------------------------------------------------------------------------#
+#--------------------------------- Course management  ---------------------------------#
+class CourseCreate(BaseModel):
+    code: str 
+    semestre: int 
+    titre: str
+    id_specialite: int
+    code_classe: str
+    code_filiere: str
+    nom_seance: str
+    matricule_enseignant: str
+    
+class CourseResponse(CourseCreate):
+    ...
+    class Config:
+        orm_mode = True
+
+#--------------------------------------------------------------------------------------#
+#--------------------------------- Course's hour management  ---------------------------------#
+class CoursePeriodCreate(BaseModel):
+    heure_debut: time 
+    heure_fin: time 
+    
+class CoursePeriodResponse(CoursePeriodCreate):
+    id_plage: int
+    class Config:
+        orm_mode = True
+
+#--------------------------------------------------------------------------------------#
 #--------------------------------- To Program (association) management  ---------------------------------#
 class ToProgramCreate(BaseModel):
-    code_classe: str 
     code_cours: str 
-    matricule_enseignant: str
     id_plage: int
     code_salle: str
     nom_jour: str
@@ -177,9 +120,48 @@ class ToProgramResponse(ToProgramCreate):
         orm_mode = True
 
 #--------------------------------------------------------------------------------------#
+#--------------------------------- Day management  ---------------------------------#
+class DayCreate(BaseModel):
+    nom: str 
+    num: int
+    
+class DayResponse(DayCreate):
+    ...
+    class Config:
+        orm_mode = True
+
+#--------------------------------------------------------------------------------------#
+#--------------------------------- Room management  ---------------------------------#
+class RoomCreate(BaseModel):
+    code: str 
+    effectif: int 
+    
+class RoomCreateResponse(RoomCreate):
+    created_at: datetime
+    class Config:
+        orm_mode = True
+
+class RoomResponse(RoomCreate):
+    ...
+    class Config:
+        orm_mode = True
+
+#--------------------------------------------------------------------------------------#
+#--------------------------------- Course type management  ---------------------------------#
+class CourseTypeCreate(BaseModel):
+    nom: str 
+    duree: time 
+    
+class CourseTypeResponse(CourseTypeCreate):
+    ...
+    class Config:
+        orm_mode = True
+
+#--------------------------------------------------------------------------------------#
 #--------------------------------- Activity (association) management  ---------------------------------#
 class ActivityCreate(BaseModel):
-    nom: str 
+    nom: str
+    date_act: date
     matricule_enseignant: str
     id_plage: int
     code_salle: str
@@ -196,10 +178,32 @@ class ActivityResponse(ActivityCreate):
         orm_mode = True
 
 #--------------------------------------------------------------------------------------#
+#--------------------------------- Teacher management  ---------------------------------#
+class TeacherCreate(BaseModel):
+    matricule: str
+    nom: str
+    email: EmailStr
+    code_filiere: str
+
+class TeacherCreateResponse(BaseModel):
+    nom: str
+    email: EmailStr
+    login: str
+    password: str
+    code_filiere: str
+    created_at: datetime
+    class Config:
+        orm_mode = True
+
+class TeacherResponse(TeacherCreate):
+    ...
+    class Config:
+        orm_mode = True
+        
+#--------------------------------------------------------------------------------------#
+#--------------------------------- Utils  ---------------------------------#
 class UserLoginValidation(BaseModel):
     email: EmailStr
     
     class Config:
         orm_mode = True
-
-#--------------------------------- Utils  ---------------------------------#
