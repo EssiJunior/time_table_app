@@ -25,7 +25,7 @@ def create_a_speciality(speciality: schemas.SpecialityCreate, db: Session = Depe
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.get("", response_model= List[schemas.SpecialityResponse])
+@router.get("/", response_model= List[schemas.SpecialityResponse])
 def display_all_specialities(db: Session = Depends(get_db)): 
     speciality = db.query(models.Specialite).all()
     return speciality
@@ -59,7 +59,7 @@ def delete_a_speciality(id: int, db: Session = Depends(get_db),
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 @router.put("", response_model=schemas.SpecialityResponse)
-def update_a_class(id: int, speciality: schemas.SpecialityCreate, db: Session = Depends(get_db),
+def update_a_speciality(id: int, speciality: schemas.SpecialityCreate, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))
     if isinstance(current_user, models.Administrateur):
