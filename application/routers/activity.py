@@ -26,7 +26,7 @@ def create_an_activity(activity: schemas.ActivityCreate, db: Session = Depends(g
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Enseignant peut realiser cette tache.")
 
 
-@router.get("", response_model= List[schemas.ActivityResponse])
+@router.get("/all", response_model= List[schemas.ActivityResponse])
 def display_all_activities(db: Session = Depends(get_db),
         current_user: models.Enseignant=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))

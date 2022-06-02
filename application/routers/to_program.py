@@ -27,7 +27,7 @@ def create_a_programmation(programmation: schemas.ToProgramCreate, db: Session =
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.get("", response_model= List[schemas.ToProgramResponse])
+@router.get("/all", response_model= List[schemas.ToProgramResponse])
 def display_all_programmations(db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):    
     print("Current User: ",type(current_user))

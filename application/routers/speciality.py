@@ -25,7 +25,7 @@ def create_a_speciality(speciality: schemas.SpecialityCreate, db: Session = Depe
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.get("/", response_model= List[schemas.SpecialityResponse])
+@router.get("/all", response_model= List[schemas.SpecialityResponse])
 def display_all_specialities(db: Session = Depends(get_db)): 
     speciality = db.query(models.Specialite).all()
     return speciality

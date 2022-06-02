@@ -24,7 +24,7 @@ def create_a_room(room: schemas.RoomCreate, db: Session = Depends(get_db),
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 
-@router.get("", response_model= List[schemas.RoomResponse])
+@router.get("/all", response_model= List[schemas.RoomResponse])
 def display_all_rooms(db: Session = Depends(get_db)):
     rooms = db.query(models.Salle).all()
     return rooms

@@ -23,7 +23,7 @@ def create_a_day(day: schemas.DayCreate, db: Session = Depends(get_db),
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 
-@router.get("", response_model= List[schemas.DayResponse])
+@router.get("/all", response_model= List[schemas.DayResponse])
 def display_all_days(db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
