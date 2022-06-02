@@ -45,7 +45,7 @@ def display_all_teachers(db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.get("/{matricule}", response_model= schemas.TeacherResponse)
+@router.get("", response_model= schemas.TeacherResponse)
 def display_a_specific_teacher(matricule: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))
@@ -57,7 +57,7 @@ def display_a_specific_teacher(matricule: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.delete("/{matricule}")
+@router.delete("")
 def delete_a_teacher(matricule: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
@@ -71,3 +71,4 @@ def delete_a_teacher(matricule: str, db: Session = Depends(get_db),
             return {"message": f"L'enseignant ayant pour matricule: {matricule} est supprimé avec succes"}
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+ 

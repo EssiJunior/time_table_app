@@ -24,16 +24,11 @@ def create_a_class(classe: schemas.ClassCreate, db: Session = Depends(get_db),
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 @router.get("", response_model= List[schemas.ClassResponse])
-def display_all_classes(db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)):   
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        classes = db.query(models.Classe).all()
-        return classes
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
-
-@router.get("/{code}", response_model= schemas.ClassResponse)
+def display_all_classes(db: Session = Depends(get_db)): 
+    classes = db.query(models.Classe).all()
+    return classes
+    
+@router.get("", response_model= schemas.ClassResponse)
 def display_a_specific_class(code: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
@@ -46,7 +41,7 @@ def display_a_specific_class(code: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.delete("/{code}")
+@router.delete("")
 def delete_a_class(code: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))

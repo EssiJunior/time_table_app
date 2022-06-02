@@ -36,7 +36,7 @@ def display_all_activities(db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Enseignant peut realiser cette tache.")
 
-@router.get("/{nom}", response_model= schemas.ActivityResponse)
+@router.get("", response_model= schemas.ActivityResponse)
 def display_a_specific_activity(nom: str, db: Session = Depends(get_db),
         current_user: models.Enseignant=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))
@@ -49,7 +49,7 @@ def display_a_specific_activity(nom: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Enseignant peut realiser cette tache.")
 
-@router.delete("/{nom}")
+@router.delete("")
 def delete_a_activity(nom: str, db: Session = Depends(get_db),
         current_user: models.Enseignant=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))

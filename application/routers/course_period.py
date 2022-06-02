@@ -35,7 +35,7 @@ def display_all_course_period(db: Session = Depends(get_db),
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 
-@router.get("/{id_plage}", response_model= schemas.CoursePeriodResponse)
+@router.get("", response_model= schemas.CoursePeriodResponse)
 def display_a_specific_course_period(id_plage: int, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
@@ -49,7 +49,7 @@ def display_a_specific_course_period(id_plage: int, db: Session = Depends(get_db
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 
-@router.delete("/{id_plage}")
+@router.delete("")
 def delete_a_course_period(id_plage: int, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))

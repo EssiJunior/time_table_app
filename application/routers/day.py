@@ -33,7 +33,7 @@ def display_all_days(db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.get("/{nom}", response_model= schemas.DayResponse)
+@router.get("", response_model= schemas.DayResponse)
 def display_a_specific_day(nom: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))
@@ -45,7 +45,7 @@ def display_a_specific_day(nom: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.delete("/{nom}")
+@router.delete("")
 def delete_a_day(nom: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))

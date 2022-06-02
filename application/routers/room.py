@@ -29,7 +29,7 @@ def display_all_rooms(db: Session = Depends(get_db)):
     rooms = db.query(models.Salle).all()
     return rooms
 
-@router.get("/{code}", response_model= schemas.RoomResponse)
+@router.get("", response_model= schemas.RoomResponse)
 def display_a_specific_room(code: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
@@ -41,7 +41,7 @@ def display_a_specific_room(code: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.delete("/{code}")
+@router.delete("")
 def delete_a_room(code: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))

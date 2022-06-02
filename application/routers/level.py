@@ -34,7 +34,7 @@ def display_all_levels(db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.get("/{numero}", response_model= schemas.LevelResponse)
+@router.get("", response_model= schemas.LevelResponse)
 def display_a_specific_level(numero: int, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
@@ -47,7 +47,7 @@ def display_a_specific_level(numero: int, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.delete("/{numero}")
+@router.delete("")
 def delete_a_level(numero: int, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))

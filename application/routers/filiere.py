@@ -29,7 +29,7 @@ def display_all_filieres(db: Session = Depends(get_db)):
     filieres = db.query(models.Filiere).all()
     return filieres
 
-@router.get("/{code}", response_model= schemas.FiliereResponse)
+@router.get("", response_model= schemas.FiliereResponse)
 def display_a_specific_filiere(code: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
@@ -41,7 +41,7 @@ def display_a_specific_filiere(code: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.delete("/{code}")
+@router.delete("")
 def delete_a_filiere(code: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
