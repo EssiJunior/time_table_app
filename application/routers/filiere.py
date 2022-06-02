@@ -24,7 +24,7 @@ def create_a_filiere(filiere: schemas.FiliereCreate, db: Session = Depends(get_d
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 
-@router.get("", response_model= List[schemas.FiliereResponse])
+@router.get("/", response_model= List[schemas.FiliereResponse])
 def display_all_filieres(db: Session = Depends(get_db)):  
     filieres = db.query(models.Filiere).all()
     return filieres

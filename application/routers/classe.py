@@ -23,7 +23,7 @@ def create_a_class(classe: schemas.ClassCreate, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.get("", response_model= List[schemas.ClassResponse])
+@router.get("/", response_model= List[schemas.ClassResponse])
 def display_all_classes(db: Session = Depends(get_db)): 
     classes = db.query(models.Classe).all()
     return classes

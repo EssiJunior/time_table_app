@@ -24,7 +24,7 @@ def create_a_level(level: schemas.LevelCreate, db: Session = Depends(get_db) ,
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 
-@router.get("", response_model= List[schemas.LevelResponse])
+@router.get("/", response_model= List[schemas.LevelResponse])
 def display_all_levels(db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):   
     print("Current User: ",type(current_user))

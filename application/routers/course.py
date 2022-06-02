@@ -23,7 +23,7 @@ def create_a_course(course: schemas.CourseCreate, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.get("", response_model= List[schemas.CourseResponse])
+@router.get("/", response_model= List[schemas.CourseResponse])
 def display_all_courses(db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):     
     print("Current User: ",type(current_user))
