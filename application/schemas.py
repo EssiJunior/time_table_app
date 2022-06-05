@@ -65,11 +65,12 @@ class FiliereCreate(BaseModel):
     
 class FiliereCreateResponse(FiliereCreate):
     created_at: datetime
+    requete_SQL: str
     class Config:
         orm_mode = True
 
 class FiliereResponse(FiliereCreate):
-    ...
+    requete_SQL: str
     class Config:
         orm_mode = True
 

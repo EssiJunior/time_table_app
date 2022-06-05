@@ -8,11 +8,38 @@ from . import models, schemas, oauth2, utils
 from .routers import (teacher, room, course_period, speciality, day,
         course_type, course, classe, level, filiere, to_program, activity)
 
+from fastapi import FastAPI
+from fastapi.openapi.utils import get_openapi
+
+from fastapi.openapi.docs import (
+    get_redoc_html,
+    get_swagger_ui_html,
+    get_swagger_ui_oauth2_redirect_html,
+)
+from fastapi.staticfiles import StaticFiles
+
 models.Base.metadata.create_all(bind=engine)
 print(models.Base.metadata.create_all(bind=engine))
 
 origins = ["*"]
 app = FastAPI()
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = get_openapi(
+        title="time-table-app",
+        version="1.0",
+        description="INF 3036 group 14 project",
+        routes=app.routes,
+    )
+    openapi_schema["info"]["x-logo"] = {
+        "url": "https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png"
+    }
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi
 app.add_middleware(
     CORSMiddleware,
     allow_origins = origins,
@@ -32,6 +59,7 @@ app.include_router(activity.router)
 app.include_router(speciality.router)
 app.include_router(course.router)
 app.include_router(to_program.router)
+
 
 @app.get("/")
 def root():
@@ -72,3 +100,6 @@ def create_an_admin(admin: schemas.AdminCreate, db: Session = Depends(get_db)):
     db.refresh(admin)
     
     return {"login":admin.login, "status": "Registered"}
+
+
+
