@@ -20,18 +20,18 @@ app.add_middleware(
     allow_credentials = True,
     allow_headers = ["*"] 
 )
-app.include_router(teacher.router)
-app.include_router(room.router)
-app.include_router(course_period.router)
-app.include_router(speciality.router)
-app.include_router(day.router)
-app.include_router(course_type.router)
-app.include_router(course.router)
-app.include_router(classe.router)
-app.include_router(level.router)
 app.include_router(filiere.router)
-app.include_router(to_program.router)
+app.include_router(day.router)
+app.include_router(level.router)
+app.include_router(course_period.router)
+app.include_router(room.router)
+app.include_router(course_type.router)
+app.include_router(classe.router)
+app.include_router(teacher.router)
 app.include_router(activity.router)
+app.include_router(speciality.router)
+app.include_router(course.router)
+app.include_router(to_program.router)
 
 @app.get("/")
 def root():
