@@ -1,9 +1,10 @@
 from fastapi import status, Depends , HTTPException, APIRouter
-from .. import models, schemas, utils, oauth2
+from .. import models, schemas, utils, oauth2, account_activation_handler
 from typing import List 
 from sqlalchemy.orm import Session
 from ..database import get_db
 from datetime import datetime
+from email_validator import validate_email, EmailNotValidError
 
 router = APIRouter(
     prefix="/teacher",
@@ -14,7 +15,7 @@ router = APIRouter(
 
 @router.post("", status_code = status.HTTP_201_CREATED, response_model=schemas.TeacherCreateResponse)
 def create_a_teacher(teacher: schemas.TeacherCreate, db: Session = Depends(get_db),
-    current_user: models.Administrateur=Depends(oauth2.get_current_user) ):
+    current_user: models.Administrateur=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))
     if isinstance(current_user, models.Administrateur):
         
@@ -22,13 +23,28 @@ def create_a_teacher(teacher: schemas.TeacherCreate, db: Session = Depends(get_d
         login = utils.login_generated(teacher.matricule)
         utils.store_teachers_in_file(teacher.matricule, login, password_Gen)
         
+        try:
+            validate_email(teacher.email)
+        except EmailNotValidError as e:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, 
+                detail="Invalid or not existing email"
+            )
+
         hashed_password = utils.hashed(password_Gen)
         password = hashed_password
         teacher = models.Enseignant(matricule=teacher.matricule, nom=teacher.nom, mot_de_passe=password, email=teacher.email, login=login, code_filiere=teacher.code_filiere)
         db.add(teacher)
         db.commit()
         db.refresh(teacher)
-            
+        
+        try:
+            account_activation_handler.AccountActivationHandler.send_activation_mail(teacher, password_Gen)
+        except Exception as e:
+            request = db.query(models.Enseignant).filter(models.Enseignant.matricule == teacher.matricule)
+            request.delete(synchronize_session = False)
+            raise e    
+        
         return {"nom":teacher.nom, "login":login, "email":teacher.email, "password": password_Gen,"code_filiere":teacher.code_filiere, "created_at": datetime.now()}
 
     else:

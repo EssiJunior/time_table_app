@@ -69,3 +69,9 @@ def update_a_room(code: str, room: schemas.RoomCreate, db: Session = Depends(get
         return room
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")
+
+@router.get("/all_possible_occupations", response_model= List[schemas.RoomClassResponse])
+def display_all_rooms_depending_on_course_student_number(db: Session = Depends(get_db)):
+    rooms = db.query(models.Salle).join(models.Classe).filter(
+        models.Salle.effectif > models.Classe.effectif).all()
+    return rooms

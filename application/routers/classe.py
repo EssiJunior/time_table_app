@@ -69,3 +69,9 @@ def update_a_class(code: str, activity: schemas.ClassCreate, db: Session = Depen
         return activity
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")
+
+@router.get("/all/{code_filiere}", response_model= List[schemas.ClassResponse])
+def display_all_classes_of_specified_filiere(code_filiere: str, db: Session = Depends(get_db)): 
+    classes = db.query(models.Classe).filter(models.Classe.code_filiere == code_filiere).all()
+    return classes
+

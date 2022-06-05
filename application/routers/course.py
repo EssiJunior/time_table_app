@@ -73,3 +73,13 @@ def update_a_course(code: str, course: schemas.CourseCreate, db: Session = Depen
         return course
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")
+
+@router.get("/all/{code_classe}", response_model= List[schemas.CourseResponse])
+def display_all_courses_of_specified_class(code_classe:str, db: Session = Depends(get_db),
+        current_user: models.Administrateur=Depends(oauth2.get_current_user)):     
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Administrateur):
+        courses = db.query(models.Cours).filter(models.Cours.code_classe == code_classe).all()
+        return courses
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")

@@ -68,6 +68,11 @@ def update_a_speciality(id: int, speciality: schemas.SpecialityCreate, db: Sessi
             raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Il n'existe aucune Specialite identifié par << {id} >>")
         response.update(speciality.dict(),synchronize_session=False)
         db.commit()
-        return speciality
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")
+
+@router.get("/all/{code_classe}", response_model= List[schemas.SpecialityResponse])
+def display_all_specialities_of_specified_class(code_classe: str, db: Session = Depends(get_db)): 
+    speciality = db.query(models.Specialite).filter(models.Specialite.code_classe == code_classe).all()
+    query_info = {"query": db.query(models.Specialite).filter(models.Specialite.code_classe == code_classe)}
+    return speciality # Add query to all responses

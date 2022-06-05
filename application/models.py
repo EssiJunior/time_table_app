@@ -80,15 +80,15 @@ class TypeSeance(Base):
     nom = Column(String(10), primary_key = True, nullable = False)
     duree = Column(Time(timezone=False), nullable=False, server_default= text("now()"))
 
-class Activite(Base):
+class Activite(Base): # ------------  Not yet okay !!!  ------------
     __tablename__ = "activite"
     
-    nom = Column(String(50), primary_key = True, nullable = False)
+    nom = Column(String(50), nullable = False)
     date_act = Column(Date, nullable = False, server_default= text("now()"))
-    matricule_enseignant = Column(String(10), ForeignKey("enseignant.matricule", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
-    id_plage = Column(Integer, ForeignKey("plage_horaire.id_plage", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
-    code_salle= Column(String(10), ForeignKey("salle.code", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
-    nom_jour = Column(String(10), ForeignKey("jour.nom", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
+    matricule_enseignant = Column(String(10), ForeignKey("enseignant.matricule", ondelete="CASCADE", onupdate="CASCADE"), primary_key=True, nullable = False)
+    id_plage = Column(Integer, ForeignKey("plage_horaire.id_plage", ondelete="CASCADE", onupdate="CASCADE"), primary_key=True, nullable = False)
+    code_salle= Column(String(10), ForeignKey("salle.code", ondelete="CASCADE", onupdate="CASCADE"), primary_key=True, nullable = False)
+    nom_jour = Column(String(10), ForeignKey("jour.nom", ondelete="CASCADE", onupdate="CASCADE"), primary_key=True, nullable = False)
     
 class Enseignant(Base):
     __tablename__ = "enseignant"

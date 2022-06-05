@@ -105,17 +105,20 @@ class CoursePeriodResponse(CoursePeriodCreate):
 #--------------------------------- To Program (association) management  ---------------------------------#
 class ToProgramCreate(BaseModel):
     code_cours: str 
+    heure_debut: time
+    heure_fin: time
+    code_salle: str
+    nom_jour: str
+
+class ToProgramResponse(BaseModel):
+    code_cours: str 
     id_plage: int
     code_salle: str
     nom_jour: str
-    
-class ToProgramCreateResponse(ToProgramCreate):
-    created_at: datetime
     class Config:
-        orm_mode = True
-
-class ToProgramResponse(ToProgramCreate):
-    ...
+        orm_mode = True    
+class ToProgramCreateResponse(ToProgramResponse):
+    created_at: datetime
     class Config:
         orm_mode = True
 
@@ -163,17 +166,22 @@ class ActivityCreate(BaseModel):
     nom: str
     date_act: date
     matricule_enseignant: str
+    heure_debut: time
+    heure_fin: time
+    code_salle: str
+    nom_jour: str
+
+class ActivityResponse(BaseModel):
+    nom: str
+    date_act: date
+    matricule_enseignant: str
     id_plage: int
     code_salle: str
     nom_jour: str
-    
-class ActivityCreateResponse(ActivityCreate):
-    created_at: datetime
     class Config:
         orm_mode = True
-
-class ActivityResponse(ActivityCreate):
-    ...
+class ActivityCreateResponse(ActivityResponse):
+    created_at: datetime
     class Config:
         orm_mode = True
 
@@ -202,8 +210,32 @@ class TeacherResponse(TeacherCreate):
         
 #--------------------------------------------------------------------------------------#
 #--------------------------------- Utils  ---------------------------------#
+class RoomClassResponse(BaseModel):
+    salle: RoomCreate
+    classe: ClassCreate
+    class Config:
+        orm_mode = True
+
+class ToProgramCourseResponse(BaseModel):
+    course: CourseCreate
+    programmation: ToProgramCreate
+    class Config:
+        orm_mode = True
+
+class ToProgramRoomResponse(BaseModel):
+    room: RoomCreate
+    programmation: ToProgramCreate
+    class Config:
+        orm_mode = True
+        
 class UserLoginValidation(BaseModel):
     email: EmailStr
     
+    class Config:
+        orm_mode = True
+
+class Token(BaseModel):
+    token: str
+    expire_time: int
     class Config:
         orm_mode = True

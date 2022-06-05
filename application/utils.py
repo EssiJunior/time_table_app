@@ -1,7 +1,6 @@
-from passlib.context import CryptContext
-from string import ascii_letters, digits
 from random import choice
-
+from string import ascii_letters, digits
+from passlib.context import CryptContext
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def hashed(password: str):
@@ -29,3 +28,7 @@ def store_teachers_in_file(nom, login, password):
     file = open("teachers.txt", "a+")
     file.write(f"|Nom: {nom} \t\t| Login: {login} \t\t| Mot de passe: {password}\t\t|\n")
     file.close()
+
+    
+
+    
