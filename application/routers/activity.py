@@ -39,8 +39,8 @@ def display_all_activities(db: Session = Depends(get_db),
         current_user: models.Enseignant=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
     if isinstance(current_user, models.Enseignant):
-        activitys = db.query(models.Activite).all()
-        return activitys
+        activities = db.query(models.Activite).all()
+        return activities
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Enseignant peut realiser cette tache.")
 
@@ -62,8 +62,8 @@ def display_a_specific_activity(matricule_enseignant: str, id_plage:int, code_sa
 
 @router.delete("")
 def delete_a_activity(matricule_enseignant: str, id_plage:int, code_salle:str
-        ,nom_jour:str, db: Session = Depends(get_db),
-        current_user: models.Enseignant=Depends(oauth2.get_current_user)):
+        ,nom_jour:str, db: Session = Depends(get_db), status_code = status.HTTP_200_OK
+        ,current_user: models.Enseignant=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))
     if isinstance(current_user, models.Enseignant):
         activity = db.query(models.Activite).filter(models.Activite.matricule_enseignant == matricule_enseignant
@@ -92,5 +92,35 @@ def update_an_activity(matricule_enseignant: str, id_plage:int, code_salle:str
         response.update(activity.dict(),synchronize_session=False)
         db.commit()
         return activity
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Enseignant peut realiser cette tache.")
+
+@router.get("/teacher/all/{matricule}", response_model= List[schemas.ActivityResponse])
+def display_all_activities_of_specified_teacher(matricule: str,db: Session = Depends(get_db),
+        current_user: models.Enseignant=Depends(oauth2.get_current_user)): 
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Enseignant):
+        activities = db.query(models.Activite).filter(models.Activite.matricule_enseignant == matricule).all()
+        return activities
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Enseignant peut realiser cette tache.")
+
+@router.get("/room/all/{code}", response_model= List[schemas.ActivityResponse])
+def display_all_activities_of_specified_room(code: str, db: Session = Depends(get_db),
+        current_user: models.Enseignant=Depends(oauth2.get_current_user)): 
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Enseignant):
+        activities = db.query(models.Activite).filter(models.Activite.code_salle == code).all()
+        return activities
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Enseignant peut realiser cette tache.")
+
+@router.get("/class/all/{code}", response_model= List[schemas.ActivityResponse])
+def display_all_activities_of_specified_(code: str, db: Session = Depends(get_db),
+        current_user: models.Enseignant=Depends(oauth2.get_current_user)): 
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Enseignant):
+        activities = db.query(models.Activite).filter(models.Activite.code_salle == code).all()
+        return activities
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Enseignant peut realiser cette tache.")
