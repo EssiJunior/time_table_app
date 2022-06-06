@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, status, BackgroundTasks, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -11,6 +11,11 @@ from .routers import (teacher, room, course_period, speciality, day,
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 
+#from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
+#from starlette.requests import Request
+#from starlette.responses import JSONResponse
+#from typing import List
+#from pydantic import EmailStr, BaseModel
 
 models.Base.metadata.create_all(bind=engine)
 print(models.Base.metadata.create_all(bind=engine))
@@ -94,5 +99,47 @@ def create_an_admin(admin: schemas.AdminCreate, db: Session = Depends(get_db)):
     
     return {"login":admin.login, "status": "Registered"}
 
+#class EmailSchema(BaseModel):
+#    email: List[EmailStr]
 
+#conf = ConnectionConfig(
+#    MAIL_FROM="essijunior19@gmail.com",
+#    MAIL_USERNAME="Junior Essi",
+#    MAIL_PASSWORD="jr192020",
+#    MAIL_PORT=587,
+#    MAIL_SERVER="smtp.gmail.com",
+#    MAIL_TLS=True,
+#    MAIL_SSL=False,
+#    USE_CREDENTIALS = True,
+#    VALIDATE_CERTS = True
+#)
 
+#@app.post("/send_mail")
+#async def send_mail(email: EmailSchema):
+#	template = """
+#		<html>
+#		<body>
+##		
+
+#<p>Hi !!!
+#		<br>Thanks for using fastapi mail, keep using it..!!!</p>
+#
+
+#		</body>
+#		</html>
+#		"""
+
+#	message = MessageSchema(
+#		subject="Fastapi-Mail module",
+#		recipients=email.dict().get("email"), # List of recipients, as many as you can pass
+#		body=template,
+#		subtype="html"
+#		)
+
+#	fm = FastMail(conf)
+#	await fm.send_message(message)
+#	print(message)
+
+	
+
+#	return JSONResponse(status_code=200, content={"message": "email has been sent"})
