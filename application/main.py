@@ -11,19 +11,13 @@ from .routers import (teacher, room, course_period, speciality, day,
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 
-from fastapi.openapi.docs import (
-    get_redoc_html,
-    get_swagger_ui_html,
-    get_swagger_ui_oauth2_redirect_html,
-)
-from fastapi.staticfiles import StaticFiles
 
 models.Base.metadata.create_all(bind=engine)
 print(models.Base.metadata.create_all(bind=engine))
 
 origins = ["*"]
 app = FastAPI()
-def custom_openapi():
+def custom_openapi(): #     Swagger UI customization
     if app.openapi_schema:
         return app.openapi_schema
     openapi_schema = get_openapi(
@@ -37,9 +31,8 @@ def custom_openapi():
     }
     app.openapi_schema = openapi_schema
     return app.openapi_schema
-
-
 app.openapi = custom_openapi
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins = origins,
@@ -89,7 +82,7 @@ def login(user_log: OAuth2PasswordRequestForm = Depends(), db: Session = Depends
         return {"access_token": access_token, "token_type": "Bearer", "user": user}
 
 #@app.post("/logout")
-#def logout(token: TokenData)
+# def logout(token: TokenData)
 @app.post("/admin", status_code = status.HTTP_201_CREATED, response_model=schemas.AdminResponse)
 def create_an_admin(admin: schemas.AdminCreate, db: Session = Depends(get_db)):
     hashed_password = utils.hashed(admin.mot_de_passe)

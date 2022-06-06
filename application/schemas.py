@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime, time, date
-from typing import Optional
-
+from typing import Optional, List
+from sqlalchemy.orm.query import Query
 #---------------------------------- Main operations ----------------------------------#
 class AdminCreate(BaseModel):
     login: str
@@ -65,15 +65,19 @@ class FiliereCreate(BaseModel):
     
 class FiliereCreateResponse(FiliereCreate):
     created_at: datetime
-    requete_SQL: str
+    
     class Config:
         orm_mode = True
 
 class FiliereResponse(FiliereCreate):
-    requete_SQL: str
+    
     class Config:
         orm_mode = True
 
+class FiliereAllResponse(FiliereCreate):
+    ...
+    class Config:
+        orm_mode = True
 #--------------------------------------------------------------------------------------#
 #--------------------------------- Course management  ---------------------------------#
 class CourseCreate(BaseModel):
