@@ -14,7 +14,7 @@ class Specialite(Base):
     id = Column(Integer, primary_key = True, nullable = False )
     nom = Column(String(50), nullable = False)
     effectif = Column(Integer, nullable = False)
-    code_classe = Column(String(10), ForeignKey("classe.code", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
+    id_classe = Column(String(10), ForeignKey("classe.id", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
 
 class Classe(Base):
     __tablename__ = "classe"
