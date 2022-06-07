@@ -201,6 +201,7 @@ class TeacherCreate(BaseModel):
 class TeacherCreateResponse(BaseModel):
     nom: str
     email: EmailStr
+    matricule: str
     login: str
     password: str
     code_filiere: str
