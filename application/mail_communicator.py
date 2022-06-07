@@ -11,7 +11,7 @@ class MailCommunicator:
     port = 465
     smtp_server_domain_name = "smtp.gmail.com"
     sender_mail = "ttappg14@gmail.com"
-    password = "inf3036ttappg14"
+    password = "avbh fqqx wzbx nitm"
     
     
     @classmethod

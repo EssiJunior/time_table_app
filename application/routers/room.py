@@ -72,6 +72,6 @@ def update_a_room(code: str, room: schemas.RoomCreate, db: Session = Depends(get
 
 @router.get("/all_possible_occupations", response_model= List[schemas.RoomClassResponse])
 def display_all_rooms_depending_on_course_student_number(db: Session = Depends(get_db)):
-    rooms = db.query(models.Salle).join(models.Classe).filter(
+    rooms = db.query(models.Salle, models.Classe).filter(
         models.Salle.effectif > models.Classe.effectif).all()
     return rooms

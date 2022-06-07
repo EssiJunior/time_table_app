@@ -17,8 +17,7 @@ from fastapi.openapi.utils import get_openapi
 #from typing import List
 #from pydantic import EmailStr, BaseModel
 
-models.Base.metadata.create_all(bind=engine)
-print(models.Base.metadata.create_all(bind=engine))
+models.Base.metadata.create_all(bind=engine) # Creation de la base de donnees
 
 origins = ["*"]
 app = FastAPI()

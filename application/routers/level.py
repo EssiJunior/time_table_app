@@ -41,7 +41,7 @@ def display_a_specific_level(code: str, db: Session = Depends(get_db),
     if isinstance(current_user, models.Administrateur):
         level = db.query(models.Niveau).filter(models.Niveau.code == code).first()
         if not level:
-            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"La niveau << {code} >> n'existe pas ")
+            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Le niveau << {code} >> n'existe pas ")
         
         return level
     else:
@@ -54,7 +54,7 @@ def delete_a_level(code: str, db: Session = Depends(get_db),
     if isinstance(current_user, models.Administrateur):
         level = db.query(models.Niveau).filter(models.Niveau.code == code)
         if level.first() == None:
-            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"La niveau << {code} >> n'existe pas ")
+            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Le niveau << {code} >> n'existe pas ")
         else:
             level.delete(synchronize_session = False)
             db.commit()
@@ -69,7 +69,7 @@ def update_a_level(code: str, level: schemas.LevelCreate, db: Session = Depends(
     if isinstance(current_user, models.Administrateur):
         response = db.query(models.Niveau).filter(models.Niveau.code == code)
         if response.first() == None:
-            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"La niveau << {code} >> n'existe pas ")
+            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Le niveau << {code} >> n'existe pas ")
         response.update(level.dict(),synchronize_session=False)
         db.commit()
         return level

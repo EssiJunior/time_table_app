@@ -39,7 +39,7 @@ class SpecialityResponse(SpecialityCreate):
 class ClassCreate(BaseModel):
     code: str 
     effectif: int 
-    niveau: int
+    niveau: str
     code_filiere: str
     
 class ClassResponse(ClassCreate):
@@ -216,8 +216,8 @@ class TeacherResponse(TeacherCreate):
 #--------------------------------------------------------------------------------------#
 #--------------------------------- Utils  ---------------------------------#
 class RoomClassResponse(BaseModel):
-    salle: RoomCreate
-    classe: ClassCreate
+    Salle: RoomResponse
+    Classe: ClassResponse
     class Config:
         orm_mode = True
 

@@ -74,6 +74,7 @@ def update_a_course_period(id_plage: int, course_period: schemas.CoursePeriodCre
             raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Il n'existe aucune plage horaire identifié par << {id_plage} >>")
         response.update(course_period.dict(),synchronize_session=False)
         db.commit()
-        return course_period
+        return {"heure_debut":course_period.heure_debut, "heure_fin":course_period.heure_fin,
+                "id_plage":id_plage}
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")

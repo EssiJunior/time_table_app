@@ -19,7 +19,8 @@ class Specialite(Base):
 class Classe(Base):
     __tablename__ = "classe"
     
-    code = Column(String(10), primary_key = True, nullable = False)
+    id = Column(Integer,primary_key = True , nullable = False) 
+    code = Column(String(10), nullable = False)
     effectif = Column(Integer, nullable = False)   
     niveau = Column(String(6), ForeignKey("niveau.code", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
     code_filiere = Column(String(6), ForeignKey("filiere.code", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
@@ -87,7 +88,7 @@ class Activite(Base): # ------------  Not yet okay !!!  ------------
     date_act = Column(Date, nullable = False, server_default= text("now()"))
     matricule_enseignant = Column(String(10), ForeignKey("enseignant.matricule", ondelete="CASCADE", onupdate="CASCADE"), primary_key=True, nullable = False)
     id_plage = Column(Integer, ForeignKey("plage_horaire.id_plage", ondelete="CASCADE", onupdate="CASCADE"), primary_key=True, nullable = False)
-    code_salle= Column(String(10), ForeignKey("salle.code", ondelete="CASCADE", onupdate="CASCADE"), primary_key=True, nullable = False)
+    code_salle = Column(String(10), ForeignKey("salle.code", ondelete="CASCADE", onupdate="CASCADE"), primary_key=True, nullable = False)
     nom_jour = Column(String(10), ForeignKey("jour.nom", ondelete="CASCADE", onupdate="CASCADE"), primary_key=True, nullable = False)
     
 class Enseignant(Base):

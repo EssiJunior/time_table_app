@@ -5,6 +5,12 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from datetime import datetime
 
+    # ------------------------- To verify ----------------------------  
+    # ------------------------- To verify ----------------------------  
+    # ------------------------- To verify ----------------------------  
+    # ------------------------- To verify ----------------------------  
+    # ------------------------- To verify ----------------------------  
+    # ------------------------- To verify ----------------------------  
 router = APIRouter(
     prefix="/class",
     tags=["Class management"]
