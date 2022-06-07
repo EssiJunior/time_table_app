@@ -14,7 +14,7 @@ class Specialite(Base):
     id = Column(Integer, primary_key = True, nullable = False )
     nom = Column(String(50), nullable = False)
     effectif = Column(Integer, nullable = False)
-    id_classe = Column(String(10), ForeignKey("classe.id", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
+    id_classe = Column(Integer, ForeignKey("classe.id", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
 
 class Classe(Base):
     __tablename__ = "classe"
@@ -43,7 +43,7 @@ class Cours(Base):
     semestre = Column(Integer, nullable = False)
     titre = Column(String(50), nullable = False)
     id_specialite = Column(Integer, ForeignKey("specialite.id", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
-    id_classe = Column(String(10), ForeignKey("classe.id", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
+    id_classe = Column(Integer, ForeignKey("classe.id", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
     code_filiere = Column(String(6), ForeignKey("filiere.code", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
     nom_seance = Column(String(10), ForeignKey("type_seance.nom", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
     matricule_enseignant = Column(String(10), ForeignKey("enseignant.matricule", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
