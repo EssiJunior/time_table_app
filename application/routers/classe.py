@@ -29,12 +29,12 @@ def create_classes(db: Session = Depends(get_db) ):
             try:
                 liste_codes.append(i+j)
                 enreg = models.Classe(code=i+"-"+j, effectif=0,  niveau=j, code_filiere=i)
-                db.add(enreg)
-                db.commit()
-                db.refresh(enreg)
             except Exception as e:
                 print("[ERROR]: ",e)
-                
+            else:
+                db.add(enreg)
+                db.commit()
+                db.refresh(enreg)   
             
     print(liste_filieres)
     print(liste_niveaux)
