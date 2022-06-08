@@ -14,13 +14,12 @@ class Specialite(Base):
     id = Column(Integer, primary_key = True, nullable = False )
     nom = Column(String(50), nullable = False)
     effectif = Column(Integer, nullable = False)
-    id_classe = Column(Integer, ForeignKey("classe.id", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
+    code_classe = Column(String(10), ForeignKey("classe.code", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
 
 class Classe(Base):
     __tablename__ = "classe"
     
-    id = Column(Integer,primary_key = True , nullable = False) 
-    code = Column(String(10), nullable = False)
+    code = Column(String(10), primary_key= True, nullable = False)
     effectif = Column(Integer, nullable = False)   
     niveau = Column(String(6), ForeignKey("niveau.code", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
     code_filiere = Column(String(6), ForeignKey("filiere.code", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
@@ -39,11 +38,12 @@ class Filiere(Base):
 class Cours(Base):
     __tablename__ = "cours"
     
-    code = Column(String(10), primary_key = True, nullable = False)
+    id = Column(Integer,primary_key = True , nullable = False) 
+    code = Column(String(10), nullable = False)
     semestre = Column(Integer, nullable = False)
     titre = Column(String(50), nullable = False)
     id_specialite = Column(Integer, ForeignKey("specialite.id", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
-    id_classe = Column(Integer, ForeignKey("classe.id", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
+    code_classe = Column(String(10), ForeignKey("classe.code", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
     code_filiere = Column(String(6), ForeignKey("filiere.code", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
     nom_seance = Column(String(10), ForeignKey("type_seance.nom", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
     matricule_enseignant = Column(String(10), ForeignKey("enseignant.matricule", ondelete="CASCADE", onupdate="CASCADE"), nullable = False)
@@ -58,7 +58,7 @@ class PlageHoraire(Base):
 class Programmer(Base): 
     __tablename__ = "programmer"
 
-    code_cours = Column(String(10), ForeignKey("cours.code", ondelete="CASCADE", onupdate="CASCADE"), primary_key = True, nullable = False)
+    id_cours = Column(Integer, ForeignKey("cours.id", ondelete="CASCADE", onupdate="CASCADE"), primary_key = True, nullable = False)
     id_plage = Column(Integer, ForeignKey("plage_horaire.id_plage", ondelete="CASCADE", onupdate="CASCADE"), primary_key = True, nullable = False)
     code_salle= Column(String(50), ForeignKey("salle.code", ondelete="CASCADE", onupdate="CASCADE"), primary_key = True, nullable = False)
     nom_jour = Column(String(10), ForeignKey("jour.nom", ondelete="CASCADE", onupdate="CASCADE"), primary_key = True, nullable = False)

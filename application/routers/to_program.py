@@ -27,14 +27,10 @@ def create_a_programmation(programmation: schemas.ToProgramCreate, db: Session =
                 == programmation.heure_debut, models.PlageHoraire.heure_fin 
                 == programmation.heure_fin).with_entities(
                     distinct(models.PlageHoraire.id_plage)).first()
-            print(db.query(models.PlageHoraire).filter(models.PlageHoraire.heure_debut 
-                == programmation.heure_debut, models.PlageHoraire.heure_fin 
-                == programmation.heure_fin).with_entities(
-                    distinct(models.PlageHoraire.id_plage)))
             if id_plage == None:
                 raise HTTPException(status_code = status.HTTP_204_NO_CONTENT, detail="La plage horaire specifiée n'existe pas")
             else:
-                programmation = models.Programmer(code_cours=programmation.code_cours,id_plage=id_plage,
+                programmation = models.Programmer(code_cours=programmation.code_cours,id_plage=id_plage[0],
                 code_salle=programmation.code_salle, nom_jour=programmation.nom_jour)
                 db.add(programmation)
                 db.commit()
