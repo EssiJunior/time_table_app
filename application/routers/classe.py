@@ -28,12 +28,13 @@ def create_classes(db: Session = Depends(get_db) ):
         for j in liste_niveaux:
             try:
                 liste_codes.append(i+j)
-                enreg = models.Classe(code=i+j, effectif=0,  niveau=j, code_filiere=i)
+                enreg = models.Classe(code=i+"-"+j, effectif=0,  niveau=j, code_filiere=i)
                 db.add(enreg)
                 db.commit()
                 db.refresh(enreg)
             except Exception as e:
                 print("[ERROR]: ",e)
+                
             
     print(liste_filieres)
     print(liste_niveaux)
@@ -71,6 +72,21 @@ def delete_a_class(code: str, db: Session = Depends(get_db),
             user.delete(synchronize_session = False)
             db.commit()
             return {"message": f"Le classe ayant pour code << {code} >> est supprimé avec succes"}
+    else:
+        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+
+@router.delete("/delete_all")
+def delete_classes(db: Session = Depends(get_db),
+        current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
+    print("Current User: ",type(current_user))
+    if isinstance(current_user, models.Administrateur):
+        user = db.query(models.Classe)
+        if user.all() == None:
+            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Il n'existe aucune classe ")
+        else:
+            user.delete(synchronize_session = False)
+            db.commit()
+            return {"message": f"Les classes on été supprimé avec succes"}
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 

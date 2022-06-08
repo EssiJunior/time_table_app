@@ -110,7 +110,7 @@ class CoursePeriodResponse(CoursePeriodCreate):
 #--------------------------------------------------------------------------------------#
 #--------------------------------- To Program (association) management  ---------------------------------#
 class ToProgramCreate(BaseModel):
-    code_cours: str 
+    id_cours: int 
     heure_debut: time
     heure_fin: time
     code_salle: str
