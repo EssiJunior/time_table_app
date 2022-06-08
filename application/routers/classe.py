@@ -11,35 +11,34 @@ router = APIRouter(
     tags=["Class management"]
 )
 
-@router.post("", status_code = status.HTTP_201_CREATED, response_model=schemas.ClassResponse)
-def create_a_class(classe: schemas.ClassCreate, db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user) ): 
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        classe = models.Classe(code=classe.code, effectif=classe.effectif,  niveau=classe.niveau, code_filiere=classe.code_filiere)
-        db.add(classe)
-        db.commit()
-        db.refresh(classe)
-        return {"code":classe.code,"effectif":classe.effectif, "niveau":classe.niveau, "code_filiere":classe.code_filiere}
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
-
-@router.get("/all", response_model= List[schemas.ClassResponse])
-def display_all_classes(db: Session = Depends(get_db)): 
+@router.get("/generate_classes", status_code = status.HTTP_201_CREATED)
+def create_classes(db: Session = Depends(get_db) ): 
     code_filieres = db.query(models.Filiere).with_entities(distinct(models.Filiere.code)).all()
     code_niveaux = db.query(models.Niveau).with_entities(distinct(models.Niveau.code)).all()
     liste_filieres = []
     liste_niveaux = []
+    liste_codes = []
     for i in code_filieres:
         liste_filieres.append(i[0])
     for i in code_niveaux:
         liste_niveaux.append(i[0])
     
-    for i in liste_niveaux:
-        for j in liste_filieres:
-            ...
+    for i in liste_filieres:
+        for j in liste_niveaux:
+            liste_codes.append(i+j)
+            enreg = models.Classe(code=i+j, effectif=0,  niveau=j, code_filiere=i)
+            db.add(enreg)
+            db.commit()
+            db.refresh(enreg)
+            
     print(liste_filieres)
     print(liste_niveaux)
+    print(liste_codes)
+    
+    return {"message":"generated"}
+
+@router.get("/all", response_model= List[schemas.ClassResponse])
+def display_all_classes(db: Session = Depends(get_db)): 
     classes = db.query(models.Classe).all()
     return classes
     
