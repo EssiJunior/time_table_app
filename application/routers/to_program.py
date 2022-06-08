@@ -115,7 +115,7 @@ def update_a_programmation(code_cours: str, heure_debut:time, heure_fin:time, co
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")
 
-@router.get("/teacher/all/{matricule}", response_model= List[schemas.ToProgramCourseResponse])
+@router.get("/teacher/all", response_model= List[schemas.ToProgramCourseResponse])
 def display_all_programmations_for_specific_teacher(matricule:str, 
     db: Session = Depends(get_db),current_user: models.Administrateur=Depends(oauth2.get_current_user)):    
     print("Current User: ",type(current_user))
@@ -128,7 +128,7 @@ def display_all_programmations_for_specific_teacher(matricule:str,
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.get("/room/all/{code}", response_model= List[schemas.ToProgramRoomResponse])
+@router.get("/room/all", response_model= List[schemas.ToProgramRoomResponse])
 def display_all_programmations_for_specific_room(code:str, 
     db: Session = Depends(get_db),current_user: models.Administrateur=Depends(oauth2.get_current_user)):    
     print("Current User: ",type(current_user))

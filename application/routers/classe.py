@@ -23,13 +23,17 @@ def create_classes(db: Session = Depends(get_db) ):
     for i in code_niveaux:
         liste_niveaux.append(i[0])
     
+    
     for i in liste_filieres:
         for j in liste_niveaux:
-            liste_codes.append(i+j)
-            enreg = models.Classe(code=i+j, effectif=0,  niveau=j, code_filiere=i)
-            db.add(enreg)
-            db.commit()
-            db.refresh(enreg)
+            try:
+                liste_codes.append(i+j)
+                enreg = models.Classe(code=i+j, effectif=0,  niveau=j, code_filiere=i)
+                db.add(enreg)
+                db.commit()
+                db.refresh(enreg)
+            except Exception as e:
+                print("[ERROR]: ",e)
             
     print(liste_filieres)
     print(liste_niveaux)
