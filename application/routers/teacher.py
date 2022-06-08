@@ -45,7 +45,7 @@ def create_a_teacher(teacher: schemas.TeacherCreate, db: Session = Depends(get_d
             request.delete(synchronize_session = False)
             raise e    
         
-        return {"nom":teacher.nom, "matricule":teacher.matricule "login":login, "email":teacher.email, "password": password_Gen,"code_filiere":teacher.code_filiere, "created_at": datetime.now()}
+        return {"nom":teacher.nom, "matricule":teacher.matricule, "login":login, "email":teacher.email, "password": password_Gen,"code_filiere":teacher.code_filiere, "created_at": datetime.now()}
 
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
