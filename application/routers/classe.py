@@ -2,15 +2,10 @@ from fastapi import status, Depends , HTTPException, APIRouter
 from .. import models, schemas, oauth2
 from typing import List 
 from sqlalchemy.orm import Session
+from sqlalchemy import distinct
 from ..database import get_db
 from datetime import datetime
 
-    # ------------------------- To verify ----------------------------  
-    # ------------------------- To verify ----------------------------  
-    # ------------------------- To verify ----------------------------  
-    # ------------------------- To verify ----------------------------  
-    # ------------------------- To verify ----------------------------  
-    # ------------------------- To verify ----------------------------  
 router = APIRouter(
     prefix="/class",
     tags=["Class management"]
@@ -31,6 +26,20 @@ def create_a_class(classe: schemas.ClassCreate, db: Session = Depends(get_db),
 
 @router.get("/all", response_model= List[schemas.ClassResponse])
 def display_all_classes(db: Session = Depends(get_db)): 
+    code_filieres = db.query(models.Filiere).with_entities(distinct(models.Filiere.code)).all()
+    code_niveaux = db.query(models.Niveau).with_entities(distinct(models.Niveau.code)).all()
+    liste_filieres = []
+    liste_niveaux = []
+    for i in code_filieres:
+        liste_filieres.append(i[0])
+    for i in code_niveaux:
+        liste_niveaux.append(i[0])
+    
+    for i in liste_niveaux:
+        for j in liste_filieres:
+            ...
+    print(liste_filieres)
+    print(liste_niveaux)
     classes = db.query(models.Classe).all()
     return classes
     

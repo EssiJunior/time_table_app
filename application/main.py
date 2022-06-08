@@ -77,16 +77,17 @@ def login(user_log: OAuth2PasswordRequestForm = Depends(), db: Session = Depends
             access_token = oauth2.create_access_token(data= {"user_id": teacher.login})
             user = "Enseignant"
             
-            return {"access_token": access_token, "token_type": "Bearer", "user": user}
+            return {"access_token": access_token, "token_type": "Bearer", "user": user, "matricule":teacher.matricule}
     else:    
         if not utils.verified(user_log.password, admin.mot_de_passe):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=utils.incorrect_pass())
         access_token = oauth2.create_access_token(data= {"user_id": admin.login})
         user = "Administrateur"
-        return {"access_token": access_token, "token_type": "Bearer", "user": user}
+        return {"access_token": access_token, "token_type": "Bearer", "user": user, "matricule":"ADMIN"}
 
 #@app.post("/logout")
 # def logout(token: TokenData)
+
 @app.post("/admin", status_code = status.HTTP_201_CREATED, response_model=schemas.AdminResponse)
 def create_an_admin(admin: schemas.AdminCreate, db: Session = Depends(get_db)):
     hashed_password = utils.hashed(admin.mot_de_passe)

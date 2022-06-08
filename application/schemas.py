@@ -17,6 +17,7 @@ class LoginResponse(BaseModel):
     access_token: str
     token_type: str
     user: str
+    matricule: str
     class Config:
         orm_mode = True
 
@@ -115,14 +116,11 @@ class ToProgramCreate(BaseModel):
     code_salle: str
     nom_jour: str
 
-class ToProgramResponse(BaseModel):
-    code_cours: str 
-    id_plage: int
-    code_salle: str
-    nom_jour: str
+class ToProgramResponse(ToProgramCreate):
+    ...
     class Config:
         orm_mode = True    
-class ToProgramCreateResponse(ToProgramResponse):
+class ToProgramCreateResponse(ToProgramCreate):
     created_at: datetime
     class Config:
         orm_mode = True
@@ -176,16 +174,11 @@ class ActivityCreate(BaseModel):
     code_salle: str
     nom_jour: str
 
-class ActivityResponse(BaseModel):
-    nom: str
-    date_act: date
-    matricule_enseignant: str
-    id_plage: int
-    code_salle: str
-    nom_jour: str
+class ActivityResponse(ActivityCreate):
+    ...
     class Config:
         orm_mode = True
-class ActivityCreateResponse(ActivityResponse):
+class ActivityCreateResponse(ActivityCreate):
     created_at: datetime
     class Config:
         orm_mode = True

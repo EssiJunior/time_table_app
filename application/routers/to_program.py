@@ -35,7 +35,7 @@ def create_a_programmation(programmation: schemas.ToProgramCreate, db: Session =
                 db.add(programmation)
                 db.commit()
                 db.refresh(programmation)
-                return {"code_cours":programmation.code_cours, "id_plage":programmation.id_plage,
+                return {"code_cours":programmation.code_cours, "heure_debut":programmation.heure_debut, "heure_fin":programmation.heure_fin,
                 "code_salle":programmation.code_salle, "nom_jour":programmation.nom_jour,"created_at": datetime.now()}
         else:
             raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail="Programmation impossible")
@@ -103,7 +103,7 @@ def update_a_programmation(code_cours: str, heure_debut:time, heure_fin:time, co
             raise HTTPException(status_code = status.HTTP_204_NO_CONTENT, detail="La plage horaire specifiée n'existe pas")
         else:
             response = db.query(models.Programmer).filter(models.Programmer.code_cours == code_cours
-            , models.Programmer.id_plage == id_plage , models.Programmer.code_salle == code_salle
+            , models.Programmer.id_plage == id_plage[0] , models.Programmer.code_salle == code_salle
             , models.Programmer.nom_jour == nom_jour)
         
             if response.first() == None:

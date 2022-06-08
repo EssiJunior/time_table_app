@@ -29,8 +29,7 @@ def create_an_activity(activity: schemas.ActivityCreate, db: Session = Depends(g
             db.add(activity)
             db.commit()
             db.refresh(activity)
-            return {"nom":activity.nom, "date_act": activity.date_act,"matricule_enseignant":activity.matricule_enseignant, "id_plage":activity.id_plage,
-                "code_salle":activity.code_salle, "nom_jour":activity.nom_jour,"created_at": datetime.now()}
+            return {"nom":activity.nom, "date_act": activity.date_act,"matricule_enseignant":activity.matricule_enseignant, "heure_debut":activity.heure_debut, "heure_fin":activity.heure_fin, "code_salle":activity.code_salle, "nom_jour":activity.nom_jour,"created_at": datetime.now()}
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Enseignant peut realiser cette tache.")
 
