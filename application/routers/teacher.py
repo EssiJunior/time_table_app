@@ -50,27 +50,16 @@ def create_a_teacher(teacher: schemas.TeacherCreate, db: Session = Depends(get_d
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 @router.get("/all", response_model= List[schemas.TeacherResponse])
-def display_all_teachers(db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        teachers = db.query(models.Enseignant).all()
-        return teachers
-    
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+def display_all_teachers(db: Session = Depends(get_db)): 
+    teachers = db.query(models.Enseignant).all()
+    return teachers
 
 @router.get("", response_model= schemas.TeacherResponse, status_code=status.HTTP_200_OK)
-def display_a_specific_teacher(matricule: str, db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)):
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        teacher = db.query(models.Enseignant).filter(models.Enseignant.matricule == matricule).first()
-        if not teacher:
-            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucun enseignant immatriculé << {matricule} >>")
-        return teacher
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+def display_a_specific_teacher(matricule: str, db: Session = Depends(get_db)):
+    teacher = db.query(models.Enseignant).filter(models.Enseignant.matricule == matricule).first()
+    if not teacher:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucun enseignant immatriculé << {matricule} >>")
+    return teacher
 
 @router.delete("", status_code=status.HTTP_200_OK)
 def delete_a_teacher(matricule: str, db: Session = Depends(get_db),

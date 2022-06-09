@@ -16,10 +16,11 @@ def create_a_programmation(programmation: schemas.ToProgramCreate, db: Session =
         current_user: models.Administrateur=Depends(oauth2.get_current_user) ): 
     print("Current User: ",type(current_user))
     if isinstance(current_user, models.Administrateur):
-        requete = db.query(models.Programmer).join(models.PlageHoraire).filter(
+        requete = db.query(models.Programmer, models.PlageHoraire).filter(
                 models.Programmer.code_salle == programmation.code_salle,
                 models.Programmer.nom_jour == programmation.nom_jour,
-                models.PlageHoraire.heure_debut == programmation.heure_debut
+                models.PlageHoraire.heure_debut == programmation.heure_debut,
+                models.PlageHoraire.heure_fin == programmation.heure_fin
                 )
         print(requete)
         if requete.first() == None:

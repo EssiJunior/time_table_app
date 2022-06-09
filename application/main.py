@@ -79,8 +79,10 @@ def login(user_log: OAuth2PasswordRequestForm = Depends(), db: Session = Depends
         user = "Administrateur"
         return {"access_token": access_token, "token_type": "Bearer", "user": user, "matricule":"ADMIN"}
 
-#@app.post("/logout")
-# def logout(token: TokenData)
+#@app.post("/logout", response_model=Token)
+#async def logout(current_user: User = Depends(get_current_active_user)):  # logout function to delete access token
+#    token_data = TokenData(username=current_user.username, expires=0)
+#    return token_data
 
 @app.post("/admin", status_code = status.HTTP_201_CREATED, response_model=schemas.AdminResponse)
 def create_an_admin(admin: schemas.AdminCreate, db: Session = Depends(get_db)):

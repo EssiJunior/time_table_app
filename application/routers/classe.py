@@ -26,7 +26,7 @@ def create_classes(db: Session = Depends(get_db) ):
     
     for i in liste_filieres:
         for j in liste_niveaux:
-            liste_codes.append(i+j)
+            liste_codes.append(i+"-"+j)
             try:
                 enreg = models.Classe(code=i+"-"+j, effectif=0,  niveau=j, code_filiere=i)
                 db.add(enreg)
