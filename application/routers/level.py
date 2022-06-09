@@ -24,7 +24,7 @@ def create_a_level(level: schemas.LevelCreate, db: Session = Depends(get_db) ,
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 
-@router.get("/all", response_model= List[schemas.LevelResponse])
+@router.get("/all", response_model= List[schemas.LevelResponse], status_code=status.HTTP_200_OK)
 def display_all_levels(db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):   
     print("Current User: ",type(current_user))
@@ -34,7 +34,7 @@ def display_all_levels(db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.get("", response_model= schemas.LevelResponse)
+@router.get("", response_model= schemas.LevelResponse, status_code=status.HTTP_200_OK)
 def display_a_specific_level(code: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
@@ -47,7 +47,7 @@ def display_a_specific_level(code: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.delete("")
+@router.delete("", status_code=status.HTTP_200_OK)
 def delete_a_level(code: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
@@ -62,7 +62,7 @@ def delete_a_level(code: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.put("", response_model=schemas.LevelResponse)
+@router.put("", response_model=schemas.LevelResponse, status_code=status.HTTP_200_OK)
 def update_a_level(code: str, level: schemas.LevelCreate, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))

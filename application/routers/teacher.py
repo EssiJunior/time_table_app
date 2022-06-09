@@ -31,8 +31,7 @@ def create_a_teacher(teacher: schemas.TeacherCreate, db: Session = Depends(get_d
                 detail="Invalid or not existing email"
             )
 
-        hashed_password = utils.hashed(password_Gen)
-        password = hashed_password
+        password = utils.hashed(password_Gen)
         teacher = models.Enseignant(matricule=teacher.matricule, nom=teacher.nom, mot_de_passe=password, email=teacher.email, login=login, code_filiere=teacher.code_filiere)
         db.add(teacher)
         db.commit()
@@ -61,7 +60,7 @@ def display_all_teachers(db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.get("", response_model= schemas.TeacherResponse)
+@router.get("", response_model= schemas.TeacherResponse, status_code=status.HTTP_200_OK)
 def display_a_specific_teacher(matricule: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))
@@ -73,7 +72,7 @@ def display_a_specific_teacher(matricule: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.delete("")
+@router.delete("", status_code=status.HTTP_200_OK)
 def delete_a_teacher(matricule: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
@@ -88,7 +87,7 @@ def delete_a_teacher(matricule: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.put("", response_model=schemas.TeacherResponse)
+@router.put("", response_model=schemas.TeacherResponse, status_code=status.HTTP_200_OK)
 def update_a_teacher(matricule: str, teacher: schemas.TeacherCreate, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))

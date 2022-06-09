@@ -25,7 +25,7 @@ def create_a_course_type(course_type: schemas.CourseTypeCreate, db: Session = De
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 
-@router.get("/all", response_model= List[schemas.CourseTypeResponse])
+@router.get("/all", response_model= List[schemas.CourseTypeResponse], status_code=status.HTTP_200_OK)
 def display_all_course_types(db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))
@@ -35,7 +35,7 @@ def display_all_course_types(db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.get("", response_model= schemas.CourseTypeResponse)
+@router.get("", response_model= schemas.CourseTypeResponse, status_code=status.HTTP_200_OK)
 def display_a_specific_course_type(nom: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))
@@ -48,7 +48,7 @@ def display_a_specific_course_type(nom: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.delete("")
+@router.delete("", status_code=status.HTTP_200_OK)
 def delete_a_course_type(nom: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))
@@ -63,7 +63,7 @@ def delete_a_course_type(nom: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.put("", response_model=schemas.CourseTypeResponse)
+@router.put("", response_model=schemas.CourseTypeResponse, status_code=status.HTTP_200_OK)
 def update_a_course_type(nom: str, course_type: schemas.CourseTypeCreate, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))

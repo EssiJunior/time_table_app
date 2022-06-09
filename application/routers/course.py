@@ -19,11 +19,11 @@ def create_a_course(course: schemas.CourseCreate, db: Session = Depends(get_db),
         db.add(course)
         db.commit()
         db.refresh(course)
-        return {"code":course.code,"semestre":course.semestre, "titre": course.titre, "id_specialite":course.id_specialite, "code_classe":course.code_classe, "code_filiere":course.code_filiere, "nom_seance":course.nom_seance, "matricule_enseignant":course.matricule_enseignant}
+        return {"id":course.id,"code":course.code, "semestre":course.semestre, "titre":course.titre, "id_specialite":course.id_specialite, "code_classe":course.code_classe, "code_filiere":course.code_filiere, "nom_seance":course.nom_seance, "matricule_enseignant":course.matricule_enseignant}
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.get("/all", response_model= List[schemas.CourseResponse])
+@router.get("/all", response_model= List[schemas.CourseResponse], status_code=status.HTTP_200_OK)
 def display_all_courses(db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):     
     print("Current User: ",type(current_user))
@@ -33,24 +33,24 @@ def display_all_courses(db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.get("", response_model= schemas.CourseResponse)
-def display_a_specific_course(code: str, db: Session = Depends(get_db),
+@router.get("", response_model= schemas.CourseResponse, status_code=status.HTTP_200_OK)
+def display_a_specific_course(id: int, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
     if isinstance(current_user, models.Administrateur):
-        course = db.query(models.Cours).filter(models.Cours.code == code).first()
+        course = db.query(models.Cours).filter(models.Cours.code == id).first()
         if not course:
             raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Le cours ayant pour code << {code} >> n'existe pas ")
         return course
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.delete("")
-def delete_a_course(code: str, db: Session = Depends(get_db),
+@router.delete("", status_code=status.HTTP_200_OK)
+def delete_a_course(id: int, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
     if isinstance(current_user, models.Administrateur):
-        user = db.query(models.Cours).filter(models.Cours.code == code)
+        user = db.query(models.Cours).filter(models.Cours.code == id)
         if user.first() == None:
             raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Le cours ayant pour code << {code} >> n'existe pas ")
         else:
@@ -60,12 +60,12 @@ def delete_a_course(code: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.put("", response_model=schemas.CourseResponse)
-def update_a_course(code: str, course: schemas.CourseCreate, db: Session = Depends(get_db),
+@router.put("", response_model=schemas.CourseResponse, status_code=status.HTTP_200_OK)
+def update_a_course(id: int, course: schemas.CourseCreate, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))
     if isinstance(current_user, models.Administrateur):
-        response = db.query(models.Cours).filter(models.Cours.code == code)
+        response = db.query(models.Cours).filter(models.Cours.code == id)
         if response.first() == None:
             raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Il n'existe aucun cours ayant pour code << {code} >>")
         response.update(course.dict(),synchronize_session=False)
@@ -74,7 +74,7 @@ def update_a_course(code: str, course: schemas.CourseCreate, db: Session = Depen
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")
 
-@router.get("/all/{code_classe}", response_model= List[schemas.CourseResponse])
+@router.get("/all/classe", response_model= List[schemas.CourseResponse], status_code=status.HTTP_200_OK)
 def display_all_courses_of_specified_class(code_classe:str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):     
     print("Current User: ",type(current_user))

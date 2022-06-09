@@ -92,7 +92,7 @@ class CourseCreate(BaseModel):
     matricule_enseignant: str
     
 class CourseResponse(CourseCreate):
-    ...
+    id: int
     class Config:
         orm_mode = True
 

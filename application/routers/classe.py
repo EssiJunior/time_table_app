@@ -26,15 +26,15 @@ def create_classes(db: Session = Depends(get_db) ):
     
     for i in liste_filieres:
         for j in liste_niveaux:
+            liste_codes.append(i+j)
             try:
-                liste_codes.append(i+j)
                 enreg = models.Classe(code=i+"-"+j, effectif=0,  niveau=j, code_filiere=i)
-            except Exception as e:
-                print("[ERROR]: ",e)
-            else:
                 db.add(enreg)
                 db.commit()
-                db.refresh(enreg)   
+                db.refresh(enreg) 
+            except Exception as e:
+                pass
+                
             
     print(liste_filieres)
     print(liste_niveaux)
@@ -42,12 +42,12 @@ def create_classes(db: Session = Depends(get_db) ):
     
     return {"message":"generated"}
 
-@router.get("/all", response_model= List[schemas.ClassResponse])
+@router.get("/all", response_model= List[schemas.ClassResponse], status_code=status.HTTP_200_OK)
 def display_all_classes(db: Session = Depends(get_db)): 
     classes = db.query(models.Classe).all()
     return classes
     
-@router.get("", response_model= schemas.ClassResponse)
+@router.get("", response_model= schemas.ClassResponse, status_code=status.HTTP_200_OK)
 def display_a_specific_class(code: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
@@ -60,7 +60,7 @@ def display_a_specific_class(code: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.delete("")
+@router.delete("",  status_code=status.HTTP_200_OK)
 def delete_a_class(code: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
@@ -75,7 +75,7 @@ def delete_a_class(code: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.delete("/delete_all")
+@router.delete("/delete_all",  status_code=status.HTTP_200_OK)
 def delete_classes(db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
@@ -90,7 +90,7 @@ def delete_classes(db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.put("", response_model=schemas.ClassResponse)
+@router.put("", response_model=schemas.ClassResponse, status_code=status.HTTP_200_OK)
 def update_a_class(code: str, activity: schemas.ClassCreate, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))
@@ -104,7 +104,7 @@ def update_a_class(code: str, activity: schemas.ClassCreate, db: Session = Depen
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")
 
-@router.get("/all/{code_filiere}", response_model= List[schemas.ClassResponse])
+@router.get("/all/filieres", response_model= List[schemas.ClassResponse], status_code=status.HTTP_200_OK)
 def display_all_classes_of_specified_filiere(code_filiere: str, db: Session = Depends(get_db)): 
     classes = db.query(models.Classe).filter(models.Classe.code_filiere == code_filiere).all()
     return classes

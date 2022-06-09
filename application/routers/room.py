@@ -24,12 +24,12 @@ def create_a_room(room: schemas.RoomCreate, db: Session = Depends(get_db),
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 
-@router.get("/all", response_model= List[schemas.RoomResponse])
+@router.get("/all", response_model= List[schemas.RoomResponse], status_code=status.HTTP_200_OK)
 def display_all_rooms(db: Session = Depends(get_db)):
     rooms = db.query(models.Salle).all()
     return rooms
 
-@router.get("", response_model= schemas.RoomResponse)
+@router.get("", response_model= schemas.RoomResponse, status_code=status.HTTP_200_OK)
 def display_a_specific_room(code: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
     print("Current User: ",type(current_user))
@@ -41,9 +41,9 @@ def display_a_specific_room(code: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.delete("")
+@router.delete("", status_code=status.HTTP_200_OK)
 def delete_a_room(code: str, db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
+        current_user: models.Administrateur=Depends(oauth2.get_current_user), status_code=status.HTTP_200_OK): 
     print("Current User: ",type(current_user))
     if isinstance(current_user, models.Administrateur):
         room = db.query(models.Salle).filter(models.Salle.code == code)
@@ -56,7 +56,7 @@ def delete_a_room(code: str, db: Session = Depends(get_db),
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
-@router.put("", response_model=schemas.RoomResponse)
+@router.put("", response_model=schemas.RoomResponse, status_code=status.HTTP_200_OK)
 def update_a_room(code: str, room: schemas.RoomCreate, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)):
     print("Current User: ",type(current_user))
@@ -70,8 +70,7 @@ def update_a_room(code: str, room: schemas.RoomCreate, db: Session = Depends(get
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")
 
-@router.get("/all_possible_occupations", response_model= List[schemas.RoomClassResponse])
-def display_all_rooms_depending_on_course_student_number(db: Session = Depends(get_db)):
-    rooms = db.query(models.Salle, models.Classe).filter(
-        models.Salle.effectif > models.Classe.effectif).all()
+@router.get("/all_possible_occupations", response_model= List[schemas.RoomResponse], status_code=status.HTTP_200_OK)
+def display_all_rooms_depending_on_course_student_number(effectif: int, db: Session = Depends(get_db)):
+    rooms = db.query(models.Salle).filter(models.Salle.effectif >= effectif).all()
     return rooms
