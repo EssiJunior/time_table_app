@@ -115,12 +115,15 @@ class ToProgramCreate(BaseModel):
     code_salle: str
     nom_jour: str
 
-class ToProgramResponse(ToProgramCreate):
-    ...
+class ToProgramResponse(BaseModel):
+    id_cours: int 
+    id_plage: int
+    code_salle: str
+    nom_jour: str
     class Config:
         orm_mode = True    
 class ToProgramCreateResponse(ToProgramCreate):
-    created_at: datetime
+    heure_fin: time
     class Config:
         orm_mode = True
 

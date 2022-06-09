@@ -16,24 +16,31 @@ def create_a_programmation(programmation: schemas.ToProgramCreate, db: Session =
         current_user: models.Administrateur=Depends(oauth2.get_current_user) ): 
     print("Current User: ",type(current_user))
     if isinstance(current_user, models.Administrateur):
-        requete = db.query(models.Programmer).join(models.Cours).join(models.TypeSeance)
+        requete = db.query(models.Programmer).join(models.PlageHoraire).join(models.Salle).filter(models.Programmer.nom_jour==programmation.nom_jour, models.PlageHoraire.heure_debut == programmation.heure_debut, models.Salle.code == programmation.code_salle)
         print(requete)
         if requete.first() == None:
-            id_plage = db.query(models.PlageHoraire).filter(models.PlageHoraire.heure_debut 
-                == programmation.heure_debut).with_entities(
-                    distinct(models.PlageHoraire.id_plage)).first()
-            if id_plage == None:
-                raise HTTPException(status_code = status.HTTP_204_NO_CONTENT, detail="La plage horaire specifiée n'existe pas")
-            else:
-                programmation = models.Programmer(id_cours=programmation.id_cours,id_plage=id_plage[0],
-                code_salle=programmation.code_salle, nom_jour=programmation.nom_jour)
-                db.add(programmation)
-                db.commit()
-                db.refresh(programmation)
-                return {"id_cours":programmation.id_cours, "heure_debut":programmation.heure_debut, "heure_fin":programmation.heure_fin,
+            duree = db.query(models.Cours).join(models.TypeSeance).filter(models.Cours.id == programmation.id_cours).with_entities(
+                    distinct(models.TypeSeance.duree)).first()
+            print(duree[0])
+            t1 = datetime.strptime(str(programmation.heure_debut), '%H:%M:%S')
+            t2 = datetime.strptime(str(duree[0]), '%H:%M:%S')
+            time_zero = datetime.strptime('00:00:00', '%H:%M:%S')
+            heureF = (t1 - time_zero + t2).time() 
+            print(heureF)
+            creation_de_plage = models.PlageHoraire(heure_debut=programmation.heure_debut,
+                            heure_fin=heureF)
+            db.add(creation_de_plage)
+            db.commit()
+            db.refresh(creation_de_plage)
+            requete = models.Programmer(id_cours=programmation.id_cours,id_plage=creation_de_plage.id_plage,
+            code_salle=programmation.code_salle, nom_jour=programmation.nom_jour)
+            db.add(requete)
+            db.commit()
+            db.refresh(requete)
+            return {"id_cours":programmation.id_cours, "heure_debut":programmation.heure_debut, "heure_fin":creation_de_plage.heure_fin,
                 "code_salle":programmation.code_salle, "nom_jour":programmation.nom_jour,"created_at": datetime.now()}
         else:
-            raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail="Programmation impossible")
+            raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail="Programmation impossible car un cours la possède déjà")
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail="Désolé, seul un administrateur peut realiser cette tache.")
 
