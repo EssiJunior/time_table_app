@@ -2,6 +2,8 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime, time, date
 from typing import Optional, List
 from sqlalchemy.orm.query import Query
+
+from application.models import Cours
 #---------------------------------- Main operations ----------------------------------#
 class AdminCreate(BaseModel):
     login: str
@@ -228,7 +230,15 @@ class ToProgramRoomResponse(BaseModel):
     programmation: ToProgramCreate
     class Config:
         orm_mode = True
-        
+
+class TimeTableResponse(BaseModel):
+    Cours: CourseResponse
+    PlageHoraire: CoursePeriodResponse
+    Jour: DayResponse
+    Salle: RoomResponse
+    Classe: ClassResponse    
+    class Config:
+        orm_mode = True
 class UserLoginValidation(BaseModel):
     email: EmailStr
     

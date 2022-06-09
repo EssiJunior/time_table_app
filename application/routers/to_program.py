@@ -4,7 +4,7 @@ from typing import List
 from sqlalchemy.orm import Session
 from ..database import get_db
 from datetime import datetime, time
-from sqlalchemy import distinct
+from sqlalchemy import distinct, text
 
 router = APIRouter(
     prefix="/timetable/course",
@@ -108,20 +108,27 @@ def update_a_programmation(id_cours: str, heure_debut:time, heure_fin:time, code
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")
 
-@router.get("/teacher/all", response_model= List[schemas.ToProgramCourseResponse])
+@router.get("/teacher/all")
 def display_all_programmations_for_specific_teacher(matricule:str, semestre:int,
     db: Session = Depends(get_db)):    
 
-    programmations = db.query(models.Programmer).join(models.Cours).filter(
-            models.Programmer.id_cours == models.Cours.code,
-            models.Cours.matricule_enseignant == matricule).all()
-    return programmations
+    #requete = db.query(models.Enseignant).join(models.Cours).join(models.Programmer).join(models.#Salle).join(models.Jour).join(models.PlageHoraire)
+    #requete = db.query(models.Programmer, models.Classe, models.Cours, models.PlageHoraire, models.#Jour, models.Salle).filter( models.Programmer.id_cours == .id, models.Programmer.id_plage == #models.PlageHoraire.id_plage, models.Programmer.code_salle == models.Salle.code, models.Cours.#code_classe == models.Classe.code, models.Cours.matricule_enseignant == matricule)
+    #print(requete)
     
+    statement = text("""SELECT *
+                        FROM enseignant, cours
+                        WHERE matricule = matricule_enseignant
+                """)
+    results = db.execute(statement)
+    #programmations = requete.all()
+    return results
 
-@router.get("/room/all", response_model= List[schemas.ToProgramRoomResponse])
-def display_all_programmations_for_specific_room(code:str, 
-    db: Session = Depends(get_db)):    
-    programmations = db.query(models.Programmer).join(models.Salle).filter(
-            models.Programmer.code_salle == models.Salle.code,models.Salle.code == code).all()
+
+@router.get("/room/all", response_model= List[schemas.TimeTableResponse])
+def display_all_programmations_for_specific_room(code:str, db: Session = Depends(get_db)):    
+    requete = db.query(models.Programmer, models.Classe, models.Cours, models.PlageHoraire, models.Jour, models.Salle).filter( models.Programmer.id_cours == models.Cours.id, models.Programmer.id_plage == models.PlageHoraire.id_plage, models.Programmer.code_salle == models.Salle.code, models.Cours.code_classe == models.Classe.code, models.Salle.code == code)
+    print(requete)
+    programmations = requete.all()
     return programmations
     
