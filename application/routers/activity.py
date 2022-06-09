@@ -15,7 +15,7 @@ router = APIRouter(
 def create_an_activity(activity: schemas.ActivityCreate, db: Session = Depends(get_db),
         current_user: models.Enseignant=Depends(oauth2.get_current_user) ):  
     print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Enseignant):
+    if isinstance(current_user, models.Enseignant) or isinstance(current_user, models.Administrateur):
         id_plage = db.query(models.PlageHoraire).filter(models.PlageHoraire.heure_debut 
                 == activity.heure_debut, models.PlageHoraire.heure_fin 
                 == activity.heure_fin ).with_entities(distinct(models.PlageHoraire.id_plage)).first()
