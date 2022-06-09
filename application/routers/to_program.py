@@ -37,6 +37,7 @@ def create_a_programmation(programmation: schemas.ToProgramCreate, db: Session =
             db.add(requete)
             db.commit()
             db.refresh(requete)
+            
             return {"id_cours":programmation.id_cours, "heure_debut":programmation.heure_debut, "heure_fin":creation_de_plage.heure_fin,
                 "code_salle":programmation.code_salle, "nom_jour":programmation.nom_jour,"created_at": datetime.now()}
         else:
@@ -108,7 +109,7 @@ def update_a_programmation(id_cours: str, heure_debut:time, heure_fin:time, code
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Administrateur peut realiser cette tache.")
 
 @router.get("/teacher/all", response_model= List[schemas.ToProgramCourseResponse])
-def display_all_programmations_for_specific_teacher(matricule:str, 
+def display_all_programmations_for_specific_teacher(matricule:str, semestre:int,
     db: Session = Depends(get_db)):    
 
     programmations = db.query(models.Programmer).join(models.Cours).filter(
