@@ -25,27 +25,17 @@ def create_a_level(level: schemas.LevelCreate, db: Session = Depends(get_db) ,
 
 
 @router.get("/all", response_model= List[schemas.LevelResponse], status_code=status.HTTP_200_OK)
-def display_all_levels(db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)):   
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        levels = db.query(models.Niveau).all()
-        return levels
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+def display_all_levels(db: Session = Depends(get_db)):
+    levels = db.query(models.Niveau).all()
+    return levels
 
 @router.get("", response_model= schemas.LevelResponse, status_code=status.HTTP_200_OK)
-def display_a_specific_level(code: str, db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        level = db.query(models.Niveau).filter(models.Niveau.code == code).first()
-        if not level:
-            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Le niveau << {code} >> n'existe pas ")
+def display_a_specific_level(code: str, db: Session = Depends(get_db)): 
+    level = db.query(models.Niveau).filter(models.Niveau.code == code).first()
+    if not level:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Le niveau << {code} >> n'existe pas ")
         
-        return level
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+    return level
 
 @router.delete("", status_code=status.HTTP_200_OK)
 def delete_a_level(code: str, db: Session = Depends(get_db),

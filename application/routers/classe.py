@@ -48,18 +48,13 @@ def display_all_classes(db: Session = Depends(get_db)):
     return classes
     
 @router.get("", response_model= schemas.ClassResponse, status_code=status.HTTP_200_OK)
-def display_a_specific_class(code: str, db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
+def display_a_specific_class(code: str, db: Session = Depends(get_db)): 
         classe = db.query(models.Classe).filter(models.Classe.code == code).first()
         if not classe:
             raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"La classe ayant pour code << {code} >> n'existe pas ")
         
         return classe
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
-
+    
 @router.delete("",  status_code=status.HTTP_200_OK)
 def delete_a_class(code: str, db: Session = Depends(get_db),
         current_user: models.Administrateur=Depends(oauth2.get_current_user)): 

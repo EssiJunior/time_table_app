@@ -26,27 +26,17 @@ def create_a_course_type(course_type: schemas.CourseTypeCreate, db: Session = De
 
 
 @router.get("/all", response_model= List[schemas.CourseTypeResponse], status_code=status.HTTP_200_OK)
-def display_all_course_types(db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)):
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
+def display_all_course_types(db: Session = Depends(get_db)):
         course_type = db.query(models.TypeSeance).all()
         return course_type
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 @router.get("", response_model= schemas.CourseTypeResponse, status_code=status.HTTP_200_OK)
-def display_a_specific_course_type(nom: str, db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)):
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        course_type = db.query(models.TypeSeance).filter(models.TypeSeance.nom == nom).first()
-        if not course_type:
-            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucun  type de seance intitulée << {nom} >>")
+def display_a_specific_course_type(nom: str, db: Session = Depends(get_db)):
+    course_type = db.query(models.TypeSeance).filter(models.TypeSeance.nom == nom).first()
+    if not course_type:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucun  type de seance intitulée << {nom} >>")
         
-        return course_type
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+    return course_type
 
 @router.delete("", status_code=status.HTTP_200_OK)
 def delete_a_course_type(nom: str, db: Session = Depends(get_db),

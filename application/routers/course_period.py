@@ -25,29 +25,17 @@ def create_a_course_period(period: schemas.CoursePeriodCreate, db: Session = Dep
 
 
 @router.get("/all", response_model= List[schemas.CoursePeriodResponse])
-def display_all_course_period(db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)):    
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
+def display_all_course_period(db: Session = Depends(get_db)): 
         period = db.query(models.PlageHoraire).all()
         return period
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
-
 
 @router.get("", response_model= schemas.CoursePeriodResponse)
-def display_a_specific_course_period(id_plage: int, db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        period = db.query(models.PlageHoraire).filter(models.PlageHoraire.id_plage == id_plage).first()
-        if not period:
-            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucune plage horaire identifié par << {id_plage} >>")
+def display_a_specific_course_period(id_plage: int, db: Session = Depends(get_db)): 
+    period = db.query(models.PlageHoraire).filter(models.PlageHoraire.id_plage == id_plage).first()
+    if not period:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucune plage horaire identifié par << {id_plage} >>")
         
-        return period
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
-
+    return period
 
 @router.delete("")
 def delete_a_course_period(id_plage: int, db: Session = Depends(get_db),

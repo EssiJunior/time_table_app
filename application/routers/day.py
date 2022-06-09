@@ -29,16 +29,11 @@ def display_all_days(db: Session = Depends(get_db)):
     return day
 
 @router.get("", response_model= schemas.DayResponse)
-def display_a_specific_day(nom: str, db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)):
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        day = db.query(models.Jour).filter(models.Jour.nom == nom).first()
-        if not day:
-            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucun jour intitulée << {nom} >>")
-        return day
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+def display_a_specific_day(nom: str, db: Session = Depends(get_db)):
+    day = db.query(models.Jour).filter(models.Jour.nom == nom).first()
+    if not day:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Aucun jour intitulée << {nom} >>")
+    return day
 
 @router.delete("")
 def delete_a_day(nom: str, db: Session = Depends(get_db),

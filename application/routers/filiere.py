@@ -33,17 +33,12 @@ def display_all_filieres(db: Session = Depends(get_db)):
     return filieres
 
 @router.get("", response_model= schemas.FiliereResponse, status_code=status.HTTP_200_OK)
-def display_a_specific_filiere(code: str, db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        filiere = db.query(models.Filiere).filter(models.Filiere.code == code).first()
-        if not filiere:
-            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"La Filiere codée << {code} >> n'existe pas ")
+def display_a_specific_filiere(code: str, db: Session = Depends(get_db)): 
+    filiere = db.query(models.Filiere).filter(models.Filiere.code == code).first()
+    if not filiere:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"La Filiere codée << {code} >> n'existe pas ")
         
-        return {"code": filiere.code, "nom":filiere.nom}
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+    return {"code": filiere.code, "nom":filiere.nom}
 
 @router.delete("", status_code=status.HTTP_200_OK)
 def delete_a_filiere(code: str, db: Session = Depends(get_db),

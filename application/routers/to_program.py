@@ -44,31 +44,21 @@ def create_a_programmation(programmation: schemas.ToProgramCreate, db: Session =
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail="Désolé, seul un administrateur peut realiser cette tache.")
 
 @router.get("/all", status_code = status.HTTP_200_OK, response_model= List[schemas.ToProgramResponse])
-def display_all_programmations(db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)):    
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        programmations = db.query(models.Programmer).all()
-        return programmations
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+def display_all_programmations(db: Session = Depends(get_db)): 
+    programmations = db.query(models.Programmer).all()
+    return programmations
 
 @router.get("/", status_code = status.HTTP_200_OK, response_model= schemas.ToProgramResponse)
 def display_a_specific_programmation(id_cours: str, id_plage:int, code_salle:str
-        ,nom_jour:str, db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)):
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        programmation = db.query(models.Programmer).filter(models.Programmer.id_cours == id_cours
+        ,nom_jour:str, db: Session = Depends(get_db)):
+    programmation = db.query(models.Programmer).filter(models.Programmer.id_cours == id_cours
         , models.Programmer.id_plage == id_plage , models.Programmer.code_salle == code_salle
         , models.Programmer.nom_jour == nom_jour)
-        if not programmation:
-            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"""la programmation ayant pour code << {id_cours} >> 
-                    dans la salle << {code_salle} >> {nom_jour} est supprimé avec succes.""")
+    if not programmation:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"""la programmation ayant pour code << {id_cours} >> 
+                dans la salle << {code_salle} >> {nom_jour} est supprimé avec succes.""")
         
-        return programmation
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+    return programmation
 
 @router.delete("/", status_code = status.HTTP_200_OK)
 def delete_a_programmation(id_cours: str, id_plage:int, code_salle:str
@@ -118,26 +108,18 @@ def update_a_programmation(id_cours: str, heure_debut:time, heure_fin:time, code
 
 @router.get("/teacher/all", response_model= List[schemas.ToProgramCourseResponse])
 def display_all_programmations_for_specific_teacher(matricule:str, 
-    db: Session = Depends(get_db),current_user: models.Administrateur=Depends(oauth2.get_current_user)):    
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        programmations = db.query(models.Programmer).join(models.Cours).filter(
+    db: Session = Depends(get_db)):    
+
+    programmations = db.query(models.Programmer).join(models.Cours).filter(
             models.Programmer.id_cours == models.Cours.code,
             models.Cours.matricule_enseignant == matricule).all()
-        return programmations
+    return programmations
     
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
 
 @router.get("/room/all", response_model= List[schemas.ToProgramRoomResponse])
 def display_all_programmations_for_specific_room(code:str, 
-    db: Session = Depends(get_db),current_user: models.Administrateur=Depends(oauth2.get_current_user)):    
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        programmations = db.query(models.Programmer).join(models.Salle).filter(
+    db: Session = Depends(get_db)):    
+    programmations = db.query(models.Programmer).join(models.Salle).filter(
             models.Programmer.code_salle == models.Salle.code,models.Salle.code == code).all()
-        print(db.query(models.Programmer).join(models.Salle).filter(models.Salle.code == code))
-        return programmations
+    return programmations
     
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")

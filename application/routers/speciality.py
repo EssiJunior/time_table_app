@@ -29,17 +29,12 @@ def display_all_specialities(db: Session = Depends(get_db)):
     return speciality
 
 @router.get("", response_model= schemas.SpecialityResponse, status_code=status.HTTP_200_OK)
-def display_a_specific_speciality(id: int, db: Session = Depends(get_db),
-        current_user: models.Administrateur=Depends(oauth2.get_current_user)): 
-    print("Current User: ",type(current_user))
-    if isinstance(current_user, models.Administrateur):
-        speciality = db.query(models.Specialite).filter(models.Specialite.id == id).first()
-        if not speciality:
-            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Il n'existe aucune Specialite identifié par << {id} >>")
+def display_a_specific_speciality(id: int, db: Session = Depends(get_db)):
+    speciality = db.query(models.Specialite).filter(models.Specialite.id == id).first()
+    if not speciality:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f"Il n'existe aucune Specialite identifié par << {id} >>")
         
-        return speciality
-    else:
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un administrateur peut realiser cette tache.")
+    return speciality
 
 @router.delete("", status_code=status.HTTP_200_OK)
 def delete_a_speciality(id: int, db: Session = Depends(get_db),
