@@ -19,16 +19,15 @@ def create_an_activity(activity: schemas.ActivityCreate, db: Session = Depends(g
         id_plage = db.query(models.PlageHoraire).filter(models.PlageHoraire.heure_debut 
                 == activity.heure_debut, models.PlageHoraire.heure_fin 
                 == activity.heure_fin ).with_entities(distinct(models.PlageHoraire.id_plage)).first()
-        print(type(id_plage))
-        print(id_plage[0])
+        
         if id_plage == None:
             raise HTTPException(status_code = status.HTTP_204_NO_CONTENT, detail="La plage horaire specifiée n'existe pas")
         else:
-            activity = models.Activite(nom=activity.nom, date_act=activity.date_act, matricule_enseignant=activity.matricule_enseignant,
+            requete = models.Activite(nom=activity.nom, date_act=activity.date_act, matricule_enseignant=activity.matricule_enseignant,
                 id_plage=id_plage[0], code_salle=activity.code_salle, nom_jour=activity.nom_jour)
-            db.add(activity)
+            db.add(requete)
             db.commit()
-            db.refresh(activity)
+            db.refresh(requete)
             return {"nom":activity.nom, "date_act": activity.date_act,"matricule_enseignant":activity.matricule_enseignant, "heure_debut":activity.heure_debut, "heure_fin":activity.heure_fin, "code_salle":activity.code_salle, "nom_jour":activity.nom_jour,"created_at": datetime.now()}
     else:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail=f"Désolé, seul un Enseignant peut realiser cette tache.")

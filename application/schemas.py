@@ -112,7 +112,6 @@ class CoursePeriodResponse(CoursePeriodCreate):
 class ToProgramCreate(BaseModel):
     id_cours: int 
     heure_debut: time
-    heure_fin: time
     code_salle: str
     nom_jour: str
 

@@ -81,7 +81,7 @@ class TypeSeance(Base):
     nom = Column(String(10), primary_key = True, nullable = False)
     duree = Column(Time(timezone=False), nullable=False, server_default= text("now()"))
 
-class Activite(Base): # ------------  Not yet okay !!!  ------------
+class Activite(Base):
     __tablename__ = "activite"
     
     nom = Column(String(50), nullable = False)
